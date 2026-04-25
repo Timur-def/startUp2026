@@ -1,0 +1,34 @@
+.signUp {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  & input {
+    height: 30px;
+  }
+}
+
+.btn {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  margin-top: auto;
+  margin-bottom: 15px;
+  border: 1px solid #36ad06;
+  border-radius: 5px;
+  cursor: pointer;
+  &:active {
+    background-color: #36ad06;
+  }
+  &:hover {
+    transition: 0.2s;
+    background-color: #e9fee2;
+  }
+}
+
+.errorText{
+    color: red;
+    font-size: 14px;
+}

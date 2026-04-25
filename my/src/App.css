@@ -1,0 +1,81 @@
+* {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  overflow: hidden;
+}
+.App {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+.mainWindow {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+.windowAuth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.textChangeWindowAuth {
+  margin-top: 15px;
+  font-size: 15px;
+  cursor: pointer;
+  &:hover {
+    color: #36ad06;
+  }
+}
+.blockLogo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 50px;
+  margin-right: 50px;
+  cursor:default;
+  .blockLogo__p{
+    color: #36ad06;
+  }
+}
+.header {
+  width: 100vw;
+  min-height: 50px;
+  height: 10vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #36ad06;
+  z-index: 10;
+}
+.blockLink {
+  display: flex;
+  gap: 30px;
+  flex-direction: row;
+}
+.link {
+  color: black;
+  cursor: pointer;
+  &:hover {
+    transition: 0.2s;
+    color: #36ad06;
+  }
+}
+
+.windowPages{
+  width: 100vw;
+  height: 90vh;
+  overflow: auto;
+  align-items: center;
+  justify-content: center;
+}
+

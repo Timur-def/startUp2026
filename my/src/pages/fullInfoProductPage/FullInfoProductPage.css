@@ -1,0 +1,123 @@
+.fullInfoProductPage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.title {
+  font-size: 25px;
+}
+.price {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.descriptionText {
+  font-size: 18px;
+  margin-top: 5px;
+}
+
+.descriptionTitle {
+  font-weight: 700;
+  font-size: 19px;
+  color: #36ad06;
+}
+
+.descriptionBlock {
+  margin-top: 20px;
+}
+
+.windowHouse {
+  width: 50vw;
+  height: 100%;
+  border-left: 2px solid #36ad06;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.infoBlock {
+  max-width: 50vw;
+  width: 50vw;
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-y: auto;
+}
+
+.mainBlockText {
+  display: flex;
+  flex-direction: row;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.greenBlock {
+  width: 3px;
+  flex-shrink: 0;
+  background-color: #36ad06;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  border: 1px solid #36ad06;
+  border-radius: 5px;
+  cursor: pointer;
+  &:active {
+    background-color: #36ad06;
+  }
+  &:hover {
+    transition: 0.2s;
+    background-color: #e9fee2;
+  }
+  &.btnBuy {
+    width: 100%;
+    height: 40px;
+  }
+  &.btnRedact {
+    width: 49%;
+    height: 40px;
+  }
+  &.btnDelete {
+    width: 49%;
+    height: 40px;
+    border: 1px solid #e90808;
+    &:hover {
+      transition: 0.2s;
+      background-color: #e908083f;
+    }
+  }
+  &.btnContact {
+    width: 250px;
+    height: 40px;
+    margin-top: 15px;
+  }
+}
+
+.contactInformationBlock {
+  margin-top: 30px;
+}
+
+.btnsBlock {
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  gap: 10px;
+}

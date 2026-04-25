@@ -1,0 +1,8 @@
+{
+  "files.watcherExclude": {
+    "**/public/models/**": true
+  },
+  "search.exclude": {
+    "**/public/models/**": true
+  }
+}
