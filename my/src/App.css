@@ -2,7 +2,6 @@
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   text-decoration: none;
-  overflow: hidden;
 }
 .App {
   display: flex;
@@ -74,7 +73,7 @@
 .windowPages{
   width: 100vw;
   height: 90vh;
-  overflow: auto;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
 }

@@ -11,13 +11,13 @@
   }
 
   &.addProductButton {
-    width: 100px;
+    width: 250px;
     height: 40px;
     font-size: 20px;
     border-radius: 16px;
     background-color: #e9fee2;
     position: absolute;
-    bottom: 30px;
+    bottom: 10px;
     z-index: 900;
     &:hover {
       transition: 0.2s;
@@ -34,6 +34,18 @@
       background-color: #d6ffc8;
     }
   }
+}
+
+.divInLeftBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 80%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 10px;
+  justify-content: center;
 }
 
 .selQuestionFalse {
@@ -62,22 +74,18 @@
   padding-top: 30px;
   gap: 5px;
 }
-.rightBlockQuestion {
-  height: 100vh;
-  display: flex;
-  flex: 1;
-}
 
 .questionBlock {
-  width: 90%;
+  width: 80%;
   display: flex;
   flex-direction: row;
   gap: 10px;
   cursor: pointer;
-  padding: 8px;
+  padding: 12px;
   align-items: center;
   border: 3px solid #fff;
   border-radius: 10px;
+  
   &:hover {
     transition: 0.2s;
     border: 3px solid #d6ffc8;
@@ -89,8 +97,35 @@
   }
 }
 
+.titleInQuestionBlock {
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .titleInLeftBlock {
   color: #36ad06;
   font-size: 18px;
   margin-bottom: 15px;
+}
+
+.titleQuestion {
+  font-size: 23px;
+  color: #36ad06;
+  overflow-wrap: break-word;
+  margin-bottom: 10px;
+}
+.textQuestion {
+  font-size: 18px;
+  overflow-wrap: break-word;
+  margin-bottom: 10px;
+}
+
+.rightBlockQuestion {
+  display: flex;
+  flex: 1;
+  padding: 10px;
+  flex-direction: column;
+  overflow-y: auto;
 }

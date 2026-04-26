@@ -24,30 +24,25 @@ export default function HelpBlog({ user }) {
     setAllQuestions(data);
   };
 
-  const handleDeleteProduct = async (_id) => {
-    setError(null);
-    await deleteQuestion(_id);
-    const data = await getQuestion();
-    setAllQuestions(data);
-  };
-
   return (
     <div className="helpBlog">
       <div className="leftBlock">
         <p className="titleInLeftBlock">Часто задаваемые вопросы: </p>
-        {allQuestions.length > 0 ? (
-          allQuestions.map((question) => (
-            <div
-              className="questionBlock"
-              onClick={() => setSelectedQuestion(question)}
-              key={question._id}
-            >
-              <p>{question.title}</p>
-            </div>
-          ))
-        ) : (
-          <p>Пока что нет вопросов, по которым нужна помощь</p>
-        )}
+        <div className="divInLeftBlock">
+          {allQuestions.length > 0 ? (
+            allQuestions.map((question) => (
+              <div
+                className="questionBlock"
+                onClick={() => setSelectedQuestion(question)}
+                key={question._id}
+              >
+                <p className="titleInQuestionBlock">{question.title}</p>
+              </div>
+            ))
+          ) : (
+            <p>Пока что нет вопросов, по которым нужна помощь</p>
+          )}
+        </div>
         {user?.role === "admin" && (
           <div
             className="btns addProductButton"
@@ -64,6 +59,8 @@ export default function HelpBlog({ user }) {
             selectedQuestion ? selectedQuestion : allQuestions[0]
           }
           user={user}
+          setAllQuestions={setAllQuestions}
+          setSelectedQuestion={setSelectedQuestion}
         />
       </div>
 
