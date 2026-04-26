@@ -9,7 +9,6 @@ export async function register(username, userlogin, password) {
   return res.json();
 }
 
-
 export async function login(userlogin, password) {
   const res = await fetch(`${API}/login`, {
     method: "POST",
@@ -221,7 +220,6 @@ export async function addQuestion(title, text) {
   return res.json();
 }
 
-
 export async function getQuestion() {
   try {
     const response = await fetch(`${API}/getQuestion`, {
@@ -242,10 +240,31 @@ export async function deleteQuestion(_id) {
     await fetch(`${API}/deleteQuestion`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({_id}),
+      body: JSON.stringify({ _id }),
     });
   } catch (err) {
     console.error("error:", err.message);
     return [];
+  }
+}
+export async function selectRatingQuestion(_idQuestion, _idUser, categoryRating) {
+  try {
+    const response = await fetch(`${API}/selectRatingQuestion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ _idQuestion, _idUser, categoryRating }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      // Бросаем ошибку с сообщением от сервера (например, "Оценка уже поставлена")
+      throw new Error(result.message || "Ошибка при выборе рейтинга");
+    }
+
+    return result;
+  } catch (err) {
+    console.error("API Error:", err.message);
+    throw err; // Пробрасываем ошибку дальше в компонент
   }
 }

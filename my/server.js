@@ -34,7 +34,7 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     console.log("Загружаемый файл:", file.originalname, "расширение:", ext);
-    cb(null, true); 
+    cb(null, true);
   },
 });
 
@@ -191,7 +191,7 @@ app.get("/api/getProducts", async (req, res) => {
   }
 });
 
-// Вход 
+// Вход
 app.post("/api/login", async (req, res) => {
   try {
     const { login, password } = req.body;
@@ -217,7 +217,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Удаление пользователя 
+// Удаление пользователя
 app.post("/api/deleteUser", async (req, res) => {
   try {
     const { login, password } = req.body;
@@ -235,7 +235,7 @@ app.post("/api/deleteUser", async (req, res) => {
   }
 });
 
-// Получить всех пользователей 
+// Получить всех пользователей
 app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -245,8 +245,7 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-
-// Смена роли 
+// Смена роли
 app.post("/api/changeRole", async (req, res) => {
   try {
     const { login, role } = req.body;
@@ -271,7 +270,7 @@ app.post("/api/changeRole", async (req, res) => {
   }
 });
 
-// Смена пароля 
+// Смена пароля
 app.post("/api/changePassword", async (req, res) => {
   try {
     const { login, oldPassword, newPassword } = req.body;
@@ -291,7 +290,7 @@ app.post("/api/changePassword", async (req, res) => {
   }
 });
 
-// Смена имени 
+// Смена имени
 app.post("/api/changeName", async (req, res) => {
   try {
     const { login, newName, password } = req.body;
@@ -310,7 +309,7 @@ app.post("/api/changeName", async (req, res) => {
   }
 });
 
-// Смена логина 
+// Смена логина
 app.post("/api/changeLogin", async (req, res) => {
   try {
     const { login, newLogin, password } = req.body;
@@ -328,7 +327,6 @@ app.post("/api/changeLogin", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
-
 
 app.post("/api/addQuestion", async (req, res) => {
   try {
@@ -357,8 +355,7 @@ app.post("/api/deleteQuestion", async (req, res) => {
   try {
     const { _id } = req.body;
     const question = await QuestionInTheHelpBlog.findOne({ _id });
-    if (!question)
-      return res.status(400).json({ message: "Неверный _id" });
+    if (!question) return res.status(400).json({ message: "Неверный _id" });
 
     await QuestionInTheHelpBlog.deleteOne({ _id: question._id });
     res.json({ message: "Удалено" });
@@ -366,7 +363,60 @@ app.post("/api/deleteQuestion", async (req, res) => {
     res.status(500).json({ message: "Ошибка сервера", error: err.message });
   }
 });
+app.post("/api/selectRatingQuestion", async (req, res) => {
+  try {
+    const { _idQuestion, _idUser, categoryRating } = req.body;
 
-// Запуск 
+    // 1. Поиск вопроса
+    const question = await QuestionInTheHelpBlog.findById(_idQuestion);
+    if (!question) {
+      return res.status(404).json({ message: "Вопрос не найден" });
+    }
+
+    // 2. Проверка входных данных
+    if (!_idUser) {
+      return res.status(400).json({ message: "ID пользователя обязателен" });
+    }
+
+    // Проверяем наличие пользователя в списках (приводим к строке для сравнения)
+    const isGood = question.goodRating.some(
+      (id) => id.toString() === _idUser.toString(),
+    );
+    const isBad = question.badRating.some(
+      (id) => id.toString() === _idUser.toString(),
+    );
+
+    // 3. Если пользователь нажал на ту же кнопку, что уже выбрана
+    if (
+      (categoryRating === "goodRating" && isGood) ||
+      (categoryRating === "badRating" && isBad)
+    ) {
+      return res.status(400).json({ message: "Оценка уже поставлена" });
+    }
+
+    // 4. Удаляем пользователя из обоих массивов (смена или сброс оценки)
+    question.goodRating.pull(_idUser);
+    question.badRating.pull(_idUser);
+
+    // 5. Добавляем в нужный массив
+    if (categoryRating === "goodRating") {
+      question.goodRating.push(_idUser);
+    } else if (categoryRating === "badRating") {
+      question.badRating.push(_idUser);
+    }
+
+    // 6. Сохраняем изменения в БД
+    await question.save();
+
+    return res.json({ message: "Успешно обновлено", question });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Ошибка сервера", error: err.message });
+  }
+});
+
+// Запуск
 const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
