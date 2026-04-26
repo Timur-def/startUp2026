@@ -17,7 +17,7 @@ export default function WindowSelectedQuestion({ selectedQuestion, user }) {
                 className="btns deleteQuestion"
                 onClick={() => handleDeleteProduct(question._id)}
               >
-                -
+                Удалить
               </div>
             )}
         </div>
