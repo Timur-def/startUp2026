@@ -22,7 +22,7 @@ export default function WindowSelectedQuestion({ selectedQuestion, user }) {
             )}
         </div>
       ) : (
-        <div>
+        <div className="selQuestionFalse">
             Начните узнавать новое про сайт и выберите подходящий вопрос
         </div>
       )}

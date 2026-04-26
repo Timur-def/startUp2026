@@ -35,28 +35,36 @@ export default function HelpBlog({ user }) {
     <div className="helpBlog">
       <div className="leftBlock">
         <p className="titleInLeftBlock">Часто задаваемые вопросы: </p>
-        {allQuestions.length > 0 ? (allQuestions.map((question) => (
-          <div
-            className="questionBlock"
-            onClick={() => setSelectedQuestion(question)}
-            key={question._id}
-          >
-            
-            <p>{question.title}</p>
-          </div>
-        ))): <p>Пока что нет вопросов, по которым нужна помощь</p>}
+        {allQuestions.length > 0 ? (
+          allQuestions.map((question) => (
+            <div
+              className="questionBlock"
+              onClick={() => setSelectedQuestion(question)}
+              key={question._id}
+            >
+              <p>{question.title}</p>
+            </div>
+          ))
+        ) : (
+          <p>Пока что нет вопросов, по которым нужна помощь</p>
+        )}
         {user?.role === "admin" && (
-        <div
-          className="btns addProductButton"
-          onClick={() => setIsModalWindow(true)}
-        >
-          +
-        </div>
-      )}
+          <div
+            className="btns addProductButton"
+            onClick={() => setIsModalWindow(true)}
+          >
+            +
+          </div>
+        )}
       </div>
 
       <div className="rightBlockQuestion">
-        <WindowSelectedQuestion selectedQuestion={selectedQuestion} user={user}/>
+        <WindowSelectedQuestion
+          selectedQuestion={
+            selectedQuestion ? selectedQuestion : allQuestions[0]
+          }
+          user={user}
+        />
       </div>
 
       {modalWindow && (
@@ -65,7 +73,6 @@ export default function HelpBlog({ user }) {
           setAllQuestions={setAllQuestions}
         />
       )}
-      
     </div>
   );
 }
