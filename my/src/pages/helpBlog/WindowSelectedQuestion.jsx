@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { deleteQuestion, getQuestion, selectRatingQuestion } from "../../auth";
+import ModalWindowEditQuestuon from "./ModalWindowEditQuestuon";
 
 export default function WindowSelectedQuestion({
   selectedQuestion,
@@ -7,17 +8,26 @@ export default function WindowSelectedQuestion({
   setAllQuestions,
   setSelectedQuestion,
 }) {
+  const [modalWindowEditQuestion, setIsModalWindowEditQuestion] =
+    useState(false);
+
   const handleDeleteProduct = async () => {
-    await deleteQuestion(selectedQuestion._id);
-    const data = await getQuestion();
-    setAllQuestions(data);
-    setSelectedQuestion(null);
+    if (window.confirm("Удалить этот вопрос?")) {
+      await deleteQuestion(selectedQuestion._id);
+      const data = await getQuestion();
+      setAllQuestions(data);
+      setSelectedQuestion(null);
+    }
   };
 
   const changeOrSelectRating = async (categoryRating) => {
-    if (!selectedQuestion?._id || !user?.id) {
-      console.log(selectedQuestion._id, user.id);
+    if (!selectedQuestion?._id) {
       console.error("Отсутствует ID вопроса или пользователя");
+      return;
+    }
+
+    if (!user?.id) {
+      alert("Создайте или войдите в аккаунт, чтобы ставить оценки вопросам");
       return;
     }
 
@@ -28,6 +38,7 @@ export default function WindowSelectedQuestion({
       const nowSelectedQuestionIndex = data.findIndex(
         (item) => item._id == selectedQuestion._id,
       );
+
       setSelectedQuestion(data[nowSelectedQuestionIndex]);
     } catch (err) {
       alert(err.message);
@@ -41,12 +52,12 @@ export default function WindowSelectedQuestion({
           <p className="titleQuestion">{selectedQuestion.title}</p>
           <p className="textQuestion">{selectedQuestion.text}</p>
           <div className="selectRating">
-            Эта статься помогла вам:
+            Эта статья помогла вам:
             <span
               onClick={() => changeOrSelectRating("goodRating")}
               className="rating goodRating"
               style={
-                selectedQuestion?.goodRating.includes(user.id)
+                user && selectedQuestion?.goodRating.includes(user.id)
                   ? { fontWeight: "700" }
                   : { fontWeight: "500" }
               }
@@ -58,7 +69,7 @@ export default function WindowSelectedQuestion({
               onClick={() => changeOrSelectRating("badRating")}
               className="rating badRating"
               style={
-                selectedQuestion?.badRating.includes(user.id)
+                user && selectedQuestion?.badRating.includes(user.id)
                   ? { fontWeight: "700" }
                   : { fontWeight: "500" }
               }
@@ -66,7 +77,7 @@ export default function WindowSelectedQuestion({
               нет {selectedQuestion?.badRating.length}
             </span>
           </div>
-          {user.role === "admin" && (
+          {user && user.role === "admin" && (
             <div
               className="btns deleteQuestion"
               onClick={() => handleDeleteProduct()}
@@ -74,11 +85,28 @@ export default function WindowSelectedQuestion({
               Удалить
             </div>
           )}
+          {user && user.role === "admin" && (
+            <div
+              className="btns editQuestion"
+              onClick={() => setIsModalWindowEditQuestion(true)}
+            >
+              Редактировать
+            </div>
+          )}
         </div>
       ) : (
         <div className="selQuestionFalse">
           Начните узнавать новое про сайт и выберите подходящий вопрос
         </div>
+      )}
+      {modalWindowEditQuestion && (
+        <ModalWindowEditQuestuon
+          setIsModalWindowEditQuestion={setIsModalWindowEditQuestion}
+          setAllQuestions={setAllQuestions}
+          _id={selectedQuestion._id}
+          selectedQuestion={selectedQuestion}
+          setSelectedQuestion={setSelectedQuestion}
+        />
       )}
     </>
   );

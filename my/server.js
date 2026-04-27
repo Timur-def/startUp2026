@@ -69,10 +69,7 @@ app.post("/api/register", async (req, res) => {
     const { username, login, password } = req.body;
     console.log("register body:", req.body);
 
-    if (!username || !password)
-      return res.status(400).json({ message: "Укажи username и password" });
-
-    const exists = await User.findOne({ username });
+    const exists = await User.findOne({ login });
     if (exists)
       return res.status(400).json({ message: "Пользователь уже существует" });
 
@@ -416,6 +413,28 @@ app.post("/api/selectRatingQuestion", async (req, res) => {
       .json({ message: "Ошибка сервера", error: err.message });
   }
 });
+
+app.post("/api/editQuestion", async (req, res) => {
+  try {
+    const { id, updates } = req.body; 
+    
+    if (!id) return res.status(400).json({ error: "ID не предоставлен" });
+
+    const updated = await QuestionInTheHelpBlog.findByIdAndUpdate(
+      id,
+      { $set: updates }, 
+      { new: true, lean: true }
+    );
+
+    if (!updated) return res.status(404).json({ error: "Вопрос не найден" });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("editQuestion error:", err.message);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
 
 // Запуск
 const PORT = process.env.PORT || 3001;

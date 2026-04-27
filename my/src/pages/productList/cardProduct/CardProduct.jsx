@@ -1,7 +1,6 @@
 import { Suspense, useMemo, useRef, useState, useEffect } from "react";
 import { View, OrbitControls, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
-import { deleteProduct } from "../../../auth";
 import { Link } from "react-router";
 import * as THREE from "three";
 import "./CardProduct.css";
@@ -37,7 +36,7 @@ function SceneContent({ modelPath }) {
   );
 }
 
-export default function CardProduct({ data, user, onDelete }) {
+export default function CardProduct({ data, user, handleDeleteProduct }) {
   const { title, price, modelPath } = data;
   const viewRef = useRef();
   const [isVisible, setIsVisible] = useState(false);
@@ -55,12 +54,7 @@ export default function CardProduct({ data, user, onDelete }) {
     return () => observer.disconnect();
   }, []);
 
-  const handleDeleteProduct = async (id) => {
-    if (window.confirm("Удалить этот товар?")) {
-      await deleteProduct({ id });
-      onDelete(id); // Вызов функции родителя
-    }
-  };
+
 
   return (
     <div className="cardProduct">
@@ -72,8 +66,8 @@ export default function CardProduct({ data, user, onDelete }) {
         )}
       </Link>
       <div className="textBlock">
-        <p className="title">{title}</p>
-        <p className="price">{price} ₽</p>
+        <p className="titleCardProduct">{title}</p>
+        <p className="priceCardProduct">{price} ₽</p>
       </div>
       <Link to={"/fullInfoProductPage"} state={{ data, user }} className="btnWatchProduct">
         <p style={{ color: "black" }}>Узнать подробности</p>

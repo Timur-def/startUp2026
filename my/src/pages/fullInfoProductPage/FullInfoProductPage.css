@@ -3,12 +3,16 @@
   height: 100%;
   display: flex;
   flex-direction: row;
+  & p {
+    width: 100%;
+    overflow-wrap: break-word;
+  }
 }
 
-.title {
+.titleProduct {
   font-size: 25px;
 }
-.price {
+.priceProduct {
   font-size: 20px;
   font-weight: 700;
 }
@@ -22,6 +26,9 @@
   font-weight: 700;
   font-size: 19px;
   color: #36ad06;
+  &.adress{
+    margin-bottom: 30px;
+  }
 }
 
 .descriptionBlock {
@@ -42,8 +49,8 @@
 .infoBlock {
   max-width: 50vw;
   width: 50vw;
-  height: 100%;
   padding: 10px;
+  padding-bottom: 30px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -60,6 +67,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 15px;
+  width:90%;
 }
 
 .greenBlock {
@@ -116,8 +124,8 @@
   display: flex;
   flex-direction: row;
   position: absolute;
-  bottom: 50px;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
   gap: 10px;
+  margin-top: 50px;
 }

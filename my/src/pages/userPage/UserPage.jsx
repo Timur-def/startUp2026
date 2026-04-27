@@ -14,7 +14,6 @@ import WindowChangePasssword from "./windowsActionWithAccount/windowChangePasssw
 import WindowChangeName from "./windowsActionWithAccount/windowChangeName";
 import WindowChangeLogin from "./windowsActionWithAccount/windowChangeLogin";
 
-
 export default function UserPage({ setUserFuncInApp }) {
   const [allUsers, setAllUsers] = useState([]);
   const [isVisibliPassword_2, setIsVisibliPassword_2] = useState(false);
@@ -25,8 +24,10 @@ export default function UserPage({ setUserFuncInApp }) {
   }, []);
 
   const handleLogout = () => {
-    logout();
-    setUser(null);
+    if (window.confirm("Выйти из аккаунта?")) {
+      logout();
+      setUser(null);
+    }
   };
 
   useEffect(() => {
@@ -53,10 +54,10 @@ export default function UserPage({ setUserFuncInApp }) {
             </div>
           </div>
           <div className="block blockActionWithAccount">
-            <WindowDeleteAccount user={user} />
+            <WindowDeleteAccount user={user} setUser={setUser} />
             <WindowChangePasssword user={user} />
-            <WindowChangeName user={user} setUser={setUser}/>
-            <WindowChangeLogin user={user} setUser={setUser}/>
+            <WindowChangeName user={user} setUser={setUser} />
+            <WindowChangeLogin user={user} setUser={setUser} />
           </div>
         </>
       ) : (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { deleteUser } from "../../../auth";
 
-export default function windowDeleteAccount({ user }) {
+export default function windowDeleteAccount({ user, setUser }) {
   const [password, setPassword] = useState("");
 
   const [isVisibliPassword, setIsVisibliPassword] = useState(false);

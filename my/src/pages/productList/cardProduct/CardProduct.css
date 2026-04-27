@@ -39,15 +39,6 @@
     background-color: #e908083f;
   }
 }
-.title {
-  display: flex;
-  font-size: 18px;
-  margin-top: 25px;
-}
-.price {
-  font-size: 18px;
-  font-weight: 700;
-}
 
 .cardProduct {
   display: flex;
@@ -72,8 +63,6 @@
   cursor: pointer;
 }
 
-
-/* Стили для самого View внутри блока */
 .view-canvas {
   position: absolute;
   top: 0;
@@ -89,5 +78,19 @@
   bottom: 75px;
   left: 20px;
   gap: 5px;
+  width: 100%;
+  .titleCardProduct,
+  .priceCardProduct {
+    font-size: 20px;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .titleCardProduct {
+    margin-top: 25px;
+  }
+  .priceCardProduct {
+    font-weight: 700;
+  }
 }
-

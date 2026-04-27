@@ -3,9 +3,7 @@ import { createPortal } from "react-dom";
 import { editProduct, getProducts } from "../../auth";
 import { useNavigate } from "react-router"; // Добавили навигацию
 
-export default function RedactModalWindow({
-  setIsModalWindow, productId
-}) {
+export default function RedactModalWindow({ setIsModalWindow, productId }) {
   const navigate = useNavigate(); // Инициализируем
   const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
@@ -20,13 +18,20 @@ export default function RedactModalWindow({
   const handleAddProduct = async () => {
     setError(null);
     // Простая проверка на заполненность (можно расширить)
-    if (product.title || product.price || file) {
+    if (
+      product.title ||
+      product.price ||
+      file ||
+      product.shopmanInfo.addressHome ||
+      product.shopmanInfo.name ||
+      product.shopmanInfo.phoneNumber
+    ) {
       try {
         await editProduct(productId, product, file);
         setIsModalWindow(false);
         // После успешного редактирования перенаправляем на список
         // Там сработает useEffect и подтянет свежие данные
-        navigate("/productList"); 
+        navigate("/productList");
       } catch (err) {
         setError("Ошибка при сохранении данных");
       }
@@ -90,7 +95,10 @@ export default function RedactModalWindow({
           onChange={(e) =>
             setProduct({
               ...product,
-              shopmanInfo: { ...product.shopmanInfo, phoneNumber: e.target.value },
+              shopmanInfo: {
+                ...product.shopmanInfo,
+                phoneNumber: e.target.value,
+              },
             })
           }
         />
@@ -101,7 +109,10 @@ export default function RedactModalWindow({
           onChange={(e) =>
             setProduct({
               ...product,
-              shopmanInfo: { ...product.shopmanInfo, addressHome: e.target.value },
+              shopmanInfo: {
+                ...product.shopmanInfo,
+                addressHome: e.target.value,
+              },
             })
           }
         />

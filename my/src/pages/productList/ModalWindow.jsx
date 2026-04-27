@@ -2,7 +2,12 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { addProduct, getProducts } from "../../auth";
 
-export default function ModalWindow({ setIsModalWindow, setAllProducts }) {
+export default function ModalWindow({
+  setIsModalWindow,
+  setAllProducts,
+  setStartIndex,
+  startIndex,
+}) {
   const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
@@ -29,6 +34,9 @@ export default function ModalWindow({ setIsModalWindow, setAllProducts }) {
       setAllProducts(data);
       setFile(null);
       setIsModalWindow(false);
+      if (data.length > startIndex + 4) {
+        setStartIndex((prev) => prev + 4 );
+      }
     } else {
       setError("Введены не все данные");
     }

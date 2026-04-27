@@ -247,7 +247,11 @@ export async function deleteQuestion(_id) {
     return [];
   }
 }
-export async function selectRatingQuestion(_idQuestion, _idUser, categoryRating) {
+export async function selectRatingQuestion(
+  _idQuestion,
+  _idUser,
+  categoryRating,
+) {
   try {
     const response = await fetch(`${API}/selectRatingQuestion`, {
       method: "POST",
@@ -266,5 +270,23 @@ export async function selectRatingQuestion(_idQuestion, _idUser, categoryRating)
   } catch (err) {
     console.error("API Error:", err.message);
     throw err; // Пробрасываем ошибку дальше в компонент
+  }
+}
+
+export async function editQuestion(data) {
+  try {
+    const res = await fetch(`${API}/editQuestion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Детали ошибки от сервера:", errorData);
+    }
+  } catch (err) {
+    console.error("error:", err.message);
+    throw err;
   }
 }

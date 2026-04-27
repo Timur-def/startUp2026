@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { addQuestion, getQuestion } from "../../auth";
 
-export default function ModalWindowAddQuestion({ setIsModalWindow, setAllQuestions }) {
+export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, setAllQuestions }) {
   const [error, setError] = useState(null);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -17,13 +17,13 @@ export default function ModalWindowAddQuestion({ setIsModalWindow, setAllQuestio
     setAllQuestions(data);
     setText("");
     setTitle("");
-    setIsModalWindow(false)
+    setIsModalWindowAddQuestion(false)
   };
 
   return createPortal(
     <>
       <div className="windowAddButton">
-        <p className="titleInModalWindow">Информация о товаре: </p>
+        <p className="titleInModalWindow">Информация о вопросе: </p>
         <input
           className="textInput"
           type="text"
@@ -44,7 +44,7 @@ export default function ModalWindowAddQuestion({ setIsModalWindow, setAllQuestio
           Добавить
         </button>
       </div>
-      <div className="background" onClick={() => setIsModalWindow(false)} />
+      <div className="background" onClick={() => setIsModalWindowAddQuestion(false)} />
     </>,
     document.body,
   );

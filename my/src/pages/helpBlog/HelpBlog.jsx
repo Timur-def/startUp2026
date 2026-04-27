@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import "./HelpBlog.css";
 import { addQuestion, deleteQuestion, getQuestion } from "../../auth";
 import ModalWindowAddQuestion from "./ModalWindowAddQuestion";
+import ModalWindowEditQuestion from "./ModalWindowEditQuestuon";
 import WindowSelectedQuestion from "./WindowSelectedQuestion";
 export default function HelpBlog({ user }) {
   const [allQuestions, setAllQuestions] = useState([]);
-  const [modalWindow, setIsModalWindow] = useState(false);
+  const [modalWindowAddQuestion, setIsModalWindowAddQuestion] = useState(false);
+
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [error, setError] = useState([]);
 
@@ -46,7 +48,7 @@ export default function HelpBlog({ user }) {
         {user?.role === "admin" && (
           <div
             className="btns addProductButton"
-            onClick={() => setIsModalWindow(true)}
+            onClick={() => setIsModalWindowAddQuestion(true)}
           >
             +
           </div>
@@ -64,9 +66,9 @@ export default function HelpBlog({ user }) {
         />
       </div>
 
-      {modalWindow && (
+      {modalWindowAddQuestion && (
         <ModalWindowAddQuestion
-          setIsModalWindow={setIsModalWindow}
+          setIsModalWindowAddQuestion={setIsModalWindowAddQuestion}
           setAllQuestions={setAllQuestions}
         />
       )}

@@ -88,8 +88,8 @@ export default function FullInfoProductPage() {
         <div className="mainBlockText">
           <div className="greenBlock" />
           <div className="texts">
-            <p className="title">{product.title}</p>
-            <p className="price">{product.price} ₽</p>
+            <p className="titleProduct">{product.title}</p>
+            <p className="priceProduct">{product.price} ₽</p>
           </div>
         </div>
         <div className="downBlock">
@@ -105,7 +105,7 @@ export default function FullInfoProductPage() {
             <p className="descriptionText">
               Номер продавца: {productInfoShopman.phoneNumber}
             </p>
-            <p className="descriptionText">
+            <p className="descriptionText adress" >
               Адрес дома: {productInfoShopman.addressHome}
             </p>
           </div>

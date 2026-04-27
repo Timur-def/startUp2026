@@ -1,6 +1,6 @@
 import "./ProductList.css";
 import CardProduct from ".//cardProduct/CardProduct";
-import { getProducts, addProduct } from "../../auth";
+import { getProducts, addProduct, deleteProduct } from "../../auth";
 import { useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
@@ -8,10 +8,11 @@ import { useLocation } from "react-router";
 
 import ModalWindow from "./ModalWindow";
 
-
 export default function ProductList({ user }) {
   const [allProducts, setAllProducts] = useState([]);
-  const [startIndex, setStartIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(() => {
+    return parseInt(localStorage.getItem("products_index") || "0");
+  });
   const location = useLocation();
   const visibleProducts = allProducts.slice(startIndex, startIndex + 4);
   const [isModalWindow, setIsModalWindow] = useState(false);
@@ -19,8 +20,20 @@ export default function ProductList({ user }) {
 
   // 1. Первичная загрузка
   useEffect(() => {
-    getProducts().then((data) => setAllProducts(data));
+    getProducts().then((data) => {
+      setAllProducts(data);
+      const savedIndex = parseInt(
+        localStorage.getItem("products_index") || "0",
+      );
+      if (savedIndex >= data.length) {
+        setStartIndex(0);
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("products_index", startIndex);
+  }, [startIndex]);
 
   // 2. Слушатель удаления через навигацию (возврат с FullInfoPage)
   useEffect(() => {
@@ -33,17 +46,27 @@ export default function ProductList({ user }) {
     }
   }, [location.state]);
 
-  // 3. Функция удаления для использования внутри списка
-  const handleDeleteFromList = (id) => {
-    setAllProducts((prev) => prev.filter((p) => p._id !== id));
-  };
-
   const changeStartIndex = (side) => {
     if (side === "next" && startIndex + 4 < allProducts.length) {
       setStartIndex((prev) => prev + 4);
     }
     if (side === "back" && startIndex - 4 >= 0) {
       setStartIndex((prev) => prev - 4);
+    }
+  };
+
+  const handleDeleteProduct = async (id) => {
+    if (window.confirm("Удалить этот товар?")) {
+      await deleteProduct({ id });
+      getProducts().then((data) => {
+        setAllProducts(data);
+        const savedIndex = parseInt(
+          localStorage.getItem("products_index") || "0",
+        );
+        if (savedIndex >= data.length) {
+          setStartIndex((prev) => prev - 4);
+        }
+      });
     }
   };
 
@@ -79,6 +102,8 @@ export default function ProductList({ user }) {
           <ModalWindow
             setIsModalWindow={setIsModalWindow}
             setAllProducts={setAllProducts}
+            startIndex={startIndex}
+            setStartIndex={setStartIndex}
           />
         )}
 
@@ -105,7 +130,7 @@ export default function ProductList({ user }) {
               key={dataProduct._id}
               user={user}
               data={dataProduct}
-              onDelete={handleDeleteFromList}
+              handleDeleteProduct={handleDeleteProduct}
             />
           ))}
         </div>

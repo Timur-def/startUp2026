@@ -27,8 +27,19 @@
   &.deleteQuestion {
     padding: 5px;
     border-radius: 8px;
-    background-color: #e9fee2;
-    z-index: 900;
+    border: 1px solid #e90808;
+    width: 500px;
+    margin-bottom: 20px;
+    &:hover {
+      transition: 0.2s;
+      background-color: #e908083f;
+    }
+  }
+  &.editQuestion {
+    padding: 5px;
+    border-radius: 8px;
+    width: 500px;
+    margin-bottom: 20px;
     &:hover {
       transition: 0.2s;
       background-color: #d6ffc8;
@@ -44,8 +55,7 @@
   height: 80%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 10px;
-  justify-content: center;
+  padding-bottom: 10px; 
 }
 
 .selQuestionFalse {
@@ -128,15 +138,18 @@
   padding: 10px;
   flex-direction: column;
   overflow-y: auto;
+  min-height: 100%;
 }
 
 .selectRating {
   display: flex;
   gap: 5px;
   margin-bottom: 15px;
+  cursor: default;
 }
 
 .rating{
+  cursor: pointer;
   &.goodRating{
     color: #36ad06;
   }

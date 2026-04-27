@@ -10,8 +10,23 @@ export default function SignUp({ onLogin }) {
   const [isVisibliPassword, setIsVisibliPassword] = useState(false);
 
   const handleRegister = async () => {
+    if (!name || !password || !userlogin) {
+      return setError("Не заполнено какое-то из полей");
+    }
+
+    if (password.split("").length < 8) {
+      return setError("Пароль должен содержать больше 8 символов");
+    }
+    const passwordRegex = /^(?=.*[a-zA-Zа-яёА-ЯЁ])(?=.*\d).+$/;
+    const isValid = passwordRegex.test(password);
+    if (!isValid) {
+      return setError(
+        "Пароль должен содержать хотя бы одну цифру и буквы латинского или русского алфавитов",
+      );
+    }
+
     const data = await register(name, userlogin, password);
-    if (data.message) return setError("Ошибка в ведённых данных");
+    if (!data.username) return setError("Ошибка в ведённых данных");
     if (data.username) {
       const loginData = await login(userlogin, password);
       if (loginData.user) onLogin(loginData.user);
