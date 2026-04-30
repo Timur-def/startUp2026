@@ -5,6 +5,11 @@
   flex-direction: column;
   align-items: center;
 }
+
+.loginSpan{
+  color: gray;
+}
+
 .block {
   width: 95%;
   border: 1px solid #36ad06;
@@ -29,20 +34,68 @@
       gap: 20px;
     }
   }
+  &.blockActionWithUsers {
+    height: 30%;
+    display: flex;
+    flex-wrap: wrap;  
+    align-items: baseline;
+    position: relative;
+
+    & .inputsShare{
+      position: absolute;
+      top: -10px;
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      & .inputShare{
+        height: 15px;
+        width: 190px;
+      }
+    }
+    & .cardUser {
+      width: 150px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 3px solid #d6ffc8;
+      cursor: pointer;
+      &:hover {
+        transition: 0.2s;
+        background-color: #e9fee2;
+      }
+      &:active {
+        transition: 0.1s;
+        background-color: #d6ffc8;
+        border-radius: 15px;
+      }
+      & p {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 }
 .mainBlockInfo {
   display: flex;
-  width: 200px;
   flex-direction: column;
   gap: 20px;
   & .textMainBlockInfo {
     font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px  ;
   }
-  & span {
+  & .adminSpan {
     color: #36ad06;
+    margin-left: 5px;
+  }
+
+  .defInfo{
+    display: flex;
+    flex-direction: column;
   }
 }
-
 
 .btn {
   display: flex;
@@ -52,7 +105,7 @@
   border-radius: 5px;
   cursor: pointer;
   height: 25px;
-  
+
   &:active {
     background-color: #36ad06;
   }
@@ -62,6 +115,7 @@
   }
   &.logout {
     border: 1px solid #e90808;
+    width: 200px;
     &:active {
       background-color: #e9080875;
     }
@@ -90,4 +144,10 @@
 .errorText {
   color: red;
   font-size: 14px;
+}
+
+.titleWindow{
+  font-size: 20px;
+  color: #36ad06;
+  margin-bottom: 20px;
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { changePassword } from "../../../auth";
+import { changePassword, getUser } from "../../../auth";
 
-export default function windowChangePasssword({ user }) {
+export default function windowChangePasssword({ user, setUser }) {
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [isVisibliPassword, setIsVisibliPassword] = useState(false);
@@ -23,7 +23,12 @@ export default function windowChangePasssword({ user }) {
       );
     }
     try {
-      await changePassword(user.login, oldPassword, newPassword);
+      const newUser = await changePassword(
+        user.login,
+        oldPassword,
+        newPassword,
+      );
+      setUser(await getUser());
       setNewPassword("");
       setOldPassword("");
     } catch (err) {

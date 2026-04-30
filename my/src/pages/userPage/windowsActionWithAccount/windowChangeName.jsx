@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { changeName, logout } from "../../../auth";
+import { changeName, getUser, logout } from "../../../auth";
 
 export default function windowChangeName({ user, setUser }) {
   const [password, setPassword] = useState("");
@@ -14,8 +14,7 @@ export default function windowChangeName({ user, setUser }) {
     }
     try {
       await changeName(user.login, newName, password);
-      logout();
-      setUser(null);
+      setUser(await getUser())
       setPassword("");
       setNewName("");
     } catch (err) {

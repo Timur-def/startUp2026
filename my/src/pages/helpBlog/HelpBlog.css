@@ -157,3 +157,14 @@
     color: red;
   }
 }
+
+.bigInp{
+  height: 300px;
+  width: 100%;
+  min-height: 40px; /* Начальная высота */
+  padding: 10px;
+  resize:none; /* Позволяет пользователю менять высоту вручную */
+  box-sizing: border-box;
+  font-family: inherit;
+
+}

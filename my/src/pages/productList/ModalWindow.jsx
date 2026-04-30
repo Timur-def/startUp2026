@@ -35,7 +35,7 @@ export default function ModalWindow({
       setFile(null);
       setIsModalWindow(false);
       if (data.length > startIndex + 4) {
-        setStartIndex((prev) => prev + 4 );
+        setStartIndex((prev) => prev + 4);
       }
     } else {
       setError("Введены не все данные");
@@ -43,7 +43,7 @@ export default function ModalWindow({
   };
   return createPortal(
     <>
-      <div className="windowAddButton">
+      <div className="modalWindow">
         <p className="titleInModalWindow">Информация о товаре: </p>
         <input
           className="textInput"
@@ -51,8 +51,8 @@ export default function ModalWindow({
           placeholder="Название"
           onChange={(e) => setProduct({ ...product, title: e.target.value })}
         />
-        <input
-          className="textInput"
+        <textarea
+          className="textInput bigInp"
           type="text"
           placeholder="Описание"
           onChange={(e) =>

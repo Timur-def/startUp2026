@@ -91,6 +91,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+// Добавление продукта
 app.post("/api/addProduct", async (req, res) => {
   try {
     const newProduct = new Product({ ...req.body });
@@ -104,6 +105,7 @@ app.post("/api/addProduct", async (req, res) => {
   }
 });
 
+// Удаление продукта
 app.post("/api/deleteProduct", async (req, res) => {
   try {
     const { id } = req.body;
@@ -130,6 +132,8 @@ app.post("/api/deleteProduct", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
+// Изменение продукта
 app.post("/api/editProduct", async (req, res) => {
   try {
     const { id, ...rawData } = req.body;
@@ -178,6 +182,7 @@ app.post("/api/editProduct", async (req, res) => {
   }
 });
 
+// Получение всех продуктов
 app.get("/api/getProducts", async (req, res) => {
   try {
     const productsArr = await Product.find().lean();
@@ -203,7 +208,7 @@ app.post("/api/login", async (req, res) => {
 
     res.json({
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         login: user.login,
         role: user.role,
@@ -232,7 +237,7 @@ app.post("/api/deleteUser", async (req, res) => {
   }
 });
 
-// Получить всех пользователей
+// Получение всех пользователей
 app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -249,19 +254,9 @@ app.post("/api/changeRole", async (req, res) => {
     const user = await User.findOne({ login });
     if (!user) return res.status(404).json({ error: "Пользователь не найден" });
 
-    if (user.role === role)
-      return res
-        .status(400)
-        .json({ error: "У пользователя уже установлена эта роль" });
-
     user.role = role;
     await user.save();
-
-    const safeUser = user.toObject();
-    safeUser._id = safeUser._id.toString();
-    delete safeUser.password;
-
-    res.json({ success: true, user: safeUser });
+    res.json({});
   } catch (err) {
     res.status(500).json({ error: "Ошибка сервера" });
   }
@@ -281,7 +276,8 @@ app.post("/api/changePassword", async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    res.json({ success: true });
+    const newUser = await User.findOne({ login });
+    res.json(newUser);
   } catch (err) {
     res.status(500).json({ error: "Ошибка сервера" });
   }
@@ -300,7 +296,8 @@ app.post("/api/changeName", async (req, res) => {
     user.username = newName;
     await user.save();
 
-    res.json({ success: true, newName: user.name });
+    const newUser = await User.findOne({ login });
+    res.json(newUser);
   } catch (err) {
     res.status(500).json({ error: "Ошибка сервера" });
   }
@@ -319,12 +316,13 @@ app.post("/api/changeLogin", async (req, res) => {
     user.login = newLogin;
     await user.save();
 
-    res.json({ success: true, newLogin: user.login });
+    res.json(user);
   } catch (err) {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
 
+// Добавление вопроса
 app.post("/api/addQuestion", async (req, res) => {
   try {
     const newQuestion = new QuestionInTheHelpBlog({ ...req.body });
@@ -338,6 +336,7 @@ app.post("/api/addQuestion", async (req, res) => {
   }
 });
 
+// Получение всех вопросов
 app.get("/api/getQuestion", async (req, res) => {
   try {
     const questionsArr = await QuestionInTheHelpBlog.find().lean();
@@ -348,6 +347,7 @@ app.get("/api/getQuestion", async (req, res) => {
   }
 });
 
+// Удаление вопроса
 app.post("/api/deleteQuestion", async (req, res) => {
   try {
     const { _id } = req.body;
@@ -360,6 +360,8 @@ app.post("/api/deleteQuestion", async (req, res) => {
     res.status(500).json({ message: "Ошибка сервера", error: err.message });
   }
 });
+
+// Изменениие оценки вопроса
 app.post("/api/selectRatingQuestion", async (req, res) => {
   try {
     const { _idQuestion, _idUser, categoryRating } = req.body;
@@ -414,16 +416,17 @@ app.post("/api/selectRatingQuestion", async (req, res) => {
   }
 });
 
+// Изменениие вопроса
 app.post("/api/editQuestion", async (req, res) => {
   try {
-    const { id, updates } = req.body; 
-    
+    const { id, updates } = req.body;
+
     if (!id) return res.status(400).json({ error: "ID не предоставлен" });
 
     const updated = await QuestionInTheHelpBlog.findByIdAndUpdate(
       id,
-      { $set: updates }, 
-      { new: true, lean: true }
+      { $set: updates },
+      { new: true, lean: true },
     );
 
     if (!updated) return res.status(404).json({ error: "Вопрос не найден" });
@@ -434,7 +437,6 @@ app.post("/api/editQuestion", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
-
 
 // Запуск
 const PORT = process.env.PORT || 3001;

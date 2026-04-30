@@ -78,3 +78,28 @@
   justify-content: center;
 }
 
+.modalWindow {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: fixed;
+  z-index: 1001;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 10px 30px #00000033;
+}
+
+.background {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  z-index: 1000;
+  background-color: #0000004d;
+  top: 0;
+  left: 0;
+}

@@ -3,66 +3,78 @@ import { createPortal } from "react-dom";
 import { editProduct, getProducts } from "../../auth";
 import { useNavigate } from "react-router"; // Добавили навигацию
 
-export default function RedactModalWindow({ setIsModalWindow, productId }) {
+export default function RedactModalWindow({ setIsModalWindow, product }) {
   const navigate = useNavigate(); // Инициализируем
   const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
-  const [product, setProduct] = useState({
-    title: "",
-    description: "",
-    price: "",
-    shopmanInfo: { name: "", phoneNumber: "", addressHome: "" },
-  });
+  const [productData, setProductData] = useState(product);
 
   const handleAddProduct = async () => {
     setError(null);
-    // Простая проверка на заполненность (можно расширить)
     if (
-      product.title ||
-      product.price ||
+      productData.title ||
+      productData.description ||
+      productData.price ||
       file ||
-      product.shopmanInfo.addressHome ||
-      product.shopmanInfo.name ||
-      product.shopmanInfo.phoneNumber
+      productData.shopmanInfo.addressHome ||
+      productData.shopmanInfo.name ||
+      productData.shopmanInfo.phoneNumber
     ) {
-      try {
-        await editProduct(productId, product, file);
-        setIsModalWindow(false);
-        // После успешного редактирования перенаправляем на список
-        // Там сработает useEffect и подтянет свежие данные
-        navigate("/productList");
-      } catch (err) {
-        setError("Ошибка при сохранении данных");
+      if (
+        productData.title !== product.title ||
+        productData.description !== product.description ||
+        productData.price !== product.price ||
+        productData.shopmanInfo.addressHome !==
+          product.shopmanInfo.addressHome ||
+        productData.shopmanInfo.name !== product.shopmanInfo.name ||
+        productData.shopmanInfo.phoneNumber !== product.shopmanInfo.phoneNumber
+      ) {
+        try {
+          await editProduct(productData._id, productData, file);
+          setIsModalWindow(false);
+          navigate("/productList");
+        } catch (err) {
+          setError("Ошибка при сохранении данных");
+        }
+      } else {
+        setError("Не изменено ни одно поле");
       }
     } else {
-      setError("Введены не все данные");
+      setError("Не заполнено ни одно поле");
     }
   };
 
   return createPortal(
     <>
-      <div className="windowAddButton">
+      <div className="modalWindow">
         <p className="titleInModalWindow">Редактирование товара: </p>
         <input
           className="textInput"
           type="text"
           placeholder="Название"
-          onChange={(e) => setProduct({ ...product, title: e.target.value })}
+          value={productData.title}
+          onChange={(e) =>
+            setProductData({ ...productData, title: e.target.value })
+          }
         />
-        <input
-          className="textInput"
+        <textarea
+          className="textInput bigInp"
           type="text"
           placeholder="Описание"
+          value={productData.description}
           onChange={(e) =>
-            setProduct({ ...product, description: e.target.value })
+            setProductData({ ...productData, description: e.target.value })
           }
         />
         <input
           className="textInput"
           type="text"
           placeholder="Цена"
-          onChange={(e) => setProduct({ ...product, price: e.target.value })}
+          value={productData.price}
+          onChange={(e) =>
+            setProductData({ ...productData, price: e.target.value })
+          }
         />
         <div className="fileWrapper">
           <input
@@ -81,10 +93,11 @@ export default function RedactModalWindow({ setIsModalWindow, productId }) {
           type="text"
           placeholder="Имя продавца"
           className="textInput"
+          value={productData.shopmanInfo.name}
           onChange={(e) =>
-            setProduct({
-              ...product,
-              shopmanInfo: { ...product.shopmanInfo, name: e.target.value },
+            setProductData({
+              ...productData,
+              shopmanInfo: { ...productData.shopmanInfo, name: e.target.value },
             })
           }
         />
@@ -92,11 +105,12 @@ export default function RedactModalWindow({ setIsModalWindow, productId }) {
           type="text"
           placeholder="Телефон"
           className="textInput"
+          value={productData.shopmanInfo.phoneNumber}
           onChange={(e) =>
-            setProduct({
-              ...product,
+            setProductData({
+              ...productData,
               shopmanInfo: {
-                ...product.shopmanInfo,
+                ...productData.shopmanInfo,
                 phoneNumber: e.target.value,
               },
             })
@@ -106,11 +120,12 @@ export default function RedactModalWindow({ setIsModalWindow, productId }) {
           type="text"
           placeholder="Адрес"
           className="textInput"
+          value={productData.shopmanInfo.addressHome}
           onChange={(e) =>
-            setProduct({
-              ...product,
+            setProductData({
+              ...productData,
               shopmanInfo: {
-                ...product.shopmanInfo,
+                ...productData.shopmanInfo,
                 addressHome: e.target.value,
               },
             })

@@ -61,7 +61,6 @@ export default function FullInfoProductPage() {
   const productInfoShopman = location.state?.data.shopmanInfo;
   const user = location.state?.user;
 
-
   // Функция удаления
   const handleDeleteProduct = async () => {
     if (window.confirm("Удалить этот товар?")) {
@@ -105,7 +104,7 @@ export default function FullInfoProductPage() {
             <p className="descriptionText">
               Номер продавца: {productInfoShopman.phoneNumber}
             </p>
-            <p className="descriptionText adress" >
+            <p className="descriptionText adress">
               Адрес дома: {productInfoShopman.addressHome}
             </p>
           </div>
@@ -115,8 +114,12 @@ export default function FullInfoProductPage() {
             )}
             {user?.role === "admin" && (
               <>
-                <div className="btn btnRedact" onClick={()=>setIsModalWindow(true)}>Редактировать товар</div>
-                {/* Меняем Link на обычный div, так как навигация теперь внутри функции */}
+                <div
+                  className="btn btnRedact"
+                  onClick={() => setIsModalWindow(true)}
+                >
+                  Редактировать товар
+                </div>
                 <div className="btn btnDelete" onClick={handleDeleteProduct}>
                   Удалить товар
                 </div>
@@ -126,6 +129,9 @@ export default function FullInfoProductPage() {
         </div>
       </div>
       <div className="windowHouse">
+        <Link className="btn backBtn" to={"/productList"}>
+          Вернуться к товарам
+        </Link>
         <Canvas camera={{ position: [0, 0, 5] }}>
           <Suspense fallback={null}>
             <InteractiveHouse modelPath={product.modelPath} />
@@ -144,7 +150,7 @@ export default function FullInfoProductPage() {
       {isModalWindow && (
         <RedactModalWindow
           setIsModalWindow={setIsModalWindow}
-          productId={product._id}
+          product={product}
         />
       )}
     </div>

@@ -22,7 +22,7 @@ export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, se
 
   return createPortal(
     <>
-      <div className="windowAddButton">
+      <div className="modalWindow">
         <p className="titleInModalWindow">Информация о вопросе: </p>
         <input
           className="textInput"
@@ -30,8 +30,8 @@ export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, se
           placeholder="Заголовок"
           onChange={(e) => setTitle(e.target.value)}
         />
-        <input
-          className="textInput"
+        <textarea
+          className="textInput bigInp"
           type="text"
           placeholder="Содержание"
           onChange={(e) => setText(e.target.value)}

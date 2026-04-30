@@ -1,0 +1,49 @@
+.customSelectContainer {
+  background-color: #fff;
+  padding: 2px;
+  border: 1px gray solid;
+  border-radius: 4px;
+  width: 200px;
+  font-size: 15px;
+  z-index: 100;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  & .selectHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    & .optionHeader {
+      width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    & .arrow {
+      margin-left: auto;
+      position: relative;
+      right: 5px;
+      &.open {
+        transition: 0.1s;
+        transform: rotate(-90deg);
+      }
+    }
+  }
+  & .selectOptions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 15px;
+    & .optionItem {
+      padding: 5px;
+      &:active {
+        color: #36ad06;
+      }
+      &:hover {
+        background-color: #d6ffc8;
+      }
+    }
+  }
+}

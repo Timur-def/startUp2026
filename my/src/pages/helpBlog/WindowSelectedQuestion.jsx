@@ -20,19 +20,22 @@ export default function WindowSelectedQuestion({
     }
   };
 
+  console.log(user);
+  
+
   const changeOrSelectRating = async (categoryRating) => {
     if (!selectedQuestion?._id) {
       console.error("Отсутствует ID вопроса или пользователя");
       return;
     }
 
-    if (!user?.id) {
+    if (!user?._id) {
       alert("Создайте или войдите в аккаунт, чтобы ставить оценки вопросам");
       return;
     }
 
     try {
-      await selectRatingQuestion(selectedQuestion._id, user.id, categoryRating);
+      await selectRatingQuestion(selectedQuestion._id, user._id, categoryRating);
       const data = await getQuestion();
       setAllQuestions(data);
       const nowSelectedQuestionIndex = data.findIndex(
@@ -57,7 +60,7 @@ export default function WindowSelectedQuestion({
               onClick={() => changeOrSelectRating("goodRating")}
               className="rating goodRating"
               style={
-                user && selectedQuestion?.goodRating.includes(user.id)
+                user && selectedQuestion?.goodRating.includes(user._id)
                   ? { fontWeight: "700" }
                   : { fontWeight: "500" }
               }
@@ -69,7 +72,7 @@ export default function WindowSelectedQuestion({
               onClick={() => changeOrSelectRating("badRating")}
               className="rating badRating"
               style={
-                user && selectedQuestion?.badRating.includes(user.id)
+                user && selectedQuestion?.badRating.includes(user._id)
                   ? { fontWeight: "700" }
                   : { fontWeight: "500" }
               }

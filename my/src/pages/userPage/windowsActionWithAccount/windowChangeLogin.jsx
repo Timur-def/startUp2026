@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { changeLogin, logout } from "../../../auth";
+import { changeLogin, getUser } from "../../../auth";
 
 export default function windowChangeLogin({ user, setUser }) {
   const [password, setPassword] = useState("");
@@ -14,8 +14,7 @@ export default function windowChangeLogin({ user, setUser }) {
     }
     try {
       await changeLogin(user.login, newLogin, password);
-      logout();
-      setUser(null);
+      setUser(await getUser());
       setPassword("");
       setNewLogin("");
     } catch (err) {

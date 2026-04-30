@@ -190,7 +190,11 @@ export async function changePassword(login, oldPassword, newPassword) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ login, oldPassword, newPassword }),
   });
-  return res.json();
+  const data = await res.json();
+  if (data) {
+    localStorage.setItem("user", JSON.stringify(data));
+  }
+  return data;
 }
 
 export async function changeName(login, newName, password) {
@@ -199,7 +203,11 @@ export async function changeName(login, newName, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ login, newName, password }),
   });
-  return res.json();
+  const data = await res.json();
+  if (data) {
+    localStorage.setItem("user", JSON.stringify(data));
+  }
+  return data;
 }
 
 export async function changeLogin(login, newLogin, password) {
@@ -208,7 +216,12 @@ export async function changeLogin(login, newLogin, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ login, newLogin, password }),
   });
-  return res.json();
+  const data = await res.json();
+  if (data) {
+    localStorage.setItem("user", JSON.stringify(data));
+  }
+
+  return data;
 }
 
 export async function addQuestion(title, text) {

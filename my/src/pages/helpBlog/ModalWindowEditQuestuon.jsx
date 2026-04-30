@@ -10,8 +10,8 @@ export default function ModalWindowAddQuestion({
   _id,
 }) {
   const [error, setError] = useState(null);
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
+  const [title, setTitle] = useState(selectedQuestion.title);
+  const [text, setText] = useState(selectedQuestion.text);
 
   const handleEditProduct = async () => {
     const updates = {};
@@ -19,6 +19,9 @@ export default function ModalWindowAddQuestion({
     if (text) updates.text = text;
     if (Object.keys(updates).length === 0) {
       return setError("Не заполнено ни одно из полей");
+    }
+    if (title == selectedQuestion.title && text == selectedQuestion.text) {
+      return setError("Не изменено ни одно из полей");
     }
     setError(null);
     await editQuestion({ id: _id, updates });
@@ -35,18 +38,20 @@ export default function ModalWindowAddQuestion({
 
   return createPortal(
     <>
-      <div className="windowAddButton">
+      <div className="modalWindow">
         <p className="titleInModalWindow">Информация о вопросе: </p>
         <input
           className="textInput"
           type="text"
           placeholder="Заголовок"
+          value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <input
-          className="textInput"
+        <textarea
+          className="textInput bigInp"
           type="text"
           placeholder="Содержание"
+          value={text}
           onChange={(e) => setText(e.target.value)}
         />
         {error && <p style={{ color: "red" }}>{error}</p>}
