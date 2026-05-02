@@ -1,14 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { editProduct, getProducts } from "../../auth";
-import { useNavigate } from "react-router"; // Добавили навигацию
+import { editProduct, getProducts, getUsers } from "../../auth";
+import { useNavigate } from "react-router";
+import CustomSelect from "../../components/customSelect/CustomSelect";
 
 export default function RedactModalWindow({ setIsModalWindow, product }) {
-  const navigate = useNavigate(); // Инициализируем
+  const navigate = useNavigate();
   const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [productData, setProductData] = useState(product);
+
+  const [allUsers, setAllUsers] = useState([]);
+  const array = [
+    { title: "Найти по имени", value: "name" },
+    { title: "Найти по логину", value: "login" },
+  ];
+  const [selectedOptionInArr, setSelectedOptionInArr] = useState(array[0]);
+  const [shareUserInput, setShareUserInput] = useState("");
+  const [sharedUsers, setSharedUsers] = useState([]);
+  const viewArrayUsers = shareUserInput !== "" ? sharedUsers : allUsers;
+
+  useEffect(() => {
+    getUsers().then((data) => setAllUsers(data));
+  }, []);
+
+  useEffect(() => {
+    if (selectedOptionInArr.value == "name") {
+      if (shareUserInput.trim() === "") {
+        setSharedUsers([]);
+        return;
+      }
+      const filtred = allUsers.filter((u) => {
+        return u.username.toLowerCase().includes(shareUserInput.toLowerCase());
+      });
+
+      setSharedUsers(filtred);
+    }
+    if (selectedOptionInArr.value == "login") {
+      if (shareUserInput.trim() === "") {
+        setSharedUsers([]);
+        return;
+      }
+      const filtred = allUsers.filter((u) => {
+        return u.login.toLowerCase().includes(shareUserInput.toLowerCase());
+      });
+
+      setSharedUsers(filtred);
+    }
+  }, [shareUserInput, allUsers]);
 
   const handleAddProduct = async () => {
     setError(null);
@@ -17,18 +57,16 @@ export default function RedactModalWindow({ setIsModalWindow, product }) {
       productData.description ||
       productData.price ||
       file ||
-      productData.shopmanInfo.addressHome ||
-      productData.shopmanInfo.name ||
-      productData.shopmanInfo.phoneNumber
+      productData.addressHome ||
+      productData.shopmanInfo
     ) {
       if (
         productData.title !== product.title ||
         productData.description !== product.description ||
         productData.price !== product.price ||
-        productData.shopmanInfo.addressHome !==
-          product.shopmanInfo.addressHome ||
-        productData.shopmanInfo.name !== product.shopmanInfo.name ||
-        productData.shopmanInfo.phoneNumber !== product.shopmanInfo.phoneNumber
+        productData.addressHome !== product.addressHome ||
+        file !== product.file ||
+        productData.shopmanInfo !== product.shopmanInfo
       ) {
         try {
           await editProduct(productData._id, productData, file);
@@ -76,6 +114,18 @@ export default function RedactModalWindow({ setIsModalWindow, product }) {
             setProductData({ ...productData, price: e.target.value })
           }
         />
+        <input
+          type="text"
+          placeholder="Адрес"
+          className="textInput"
+          value={productData.addressHome}
+          onChange={(e) =>
+            setProductData({
+              ...productData,
+              addressHome: e.target.value,
+            })
+          }
+        />
         <div className="fileWrapper">
           <input
             className="fileInput"
@@ -88,49 +138,53 @@ export default function RedactModalWindow({ setIsModalWindow, product }) {
           </label>
           <p>{file?.name || "Нет файла"}</p>
         </div>
-        <p className="titleInModalWindow downTitle">Информация о продавце: </p>
-        <input
-          type="text"
-          placeholder="Имя продавца"
-          className="textInput"
-          value={productData.shopmanInfo.name}
-          onChange={(e) =>
-            setProductData({
-              ...productData,
-              shopmanInfo: { ...productData.shopmanInfo, name: e.target.value },
-            })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Телефон"
-          className="textInput"
-          value={productData.shopmanInfo.phoneNumber}
-          onChange={(e) =>
-            setProductData({
-              ...productData,
-              shopmanInfo: {
-                ...productData.shopmanInfo,
-                phoneNumber: e.target.value,
-              },
-            })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Адрес"
-          className="textInput"
-          value={productData.shopmanInfo.addressHome}
-          onChange={(e) =>
-            setProductData({
-              ...productData,
-              shopmanInfo: {
-                ...productData.shopmanInfo,
-                addressHome: e.target.value,
-              },
-            })
-          }
-        />
+        <div className="infoSelectUser">
+          <div className="blockInfoSelectUser">
+            <p className="titleInModalWindow downTitle">
+              Информация о продавце:
+            </p>
+            <p className="titleAboutUser">
+              {productData.shopmanInfo?.username}
+            </p>
+          </div>
+          <div className="infoSelectedSalesmanUserBlock">
+            <div className="blockInfoSelectUser inputsShare">
+              <CustomSelect
+                className="select"
+                array={array}
+                onChange={setSelectedOptionInArr}
+              />
+              <input
+                type="text"
+                className="inputShare"
+                placeholder={selectedOptionInArr.title}
+                value={shareUserInput}
+                onChange={(e) => setShareUserInput(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="allUsersBlock">
+            {viewArrayUsers.length > 0
+              ? viewArrayUsers.map((item) => {
+                  return (
+                    item.role == "salesman" && (
+                      <div
+                        className="cardUser"
+                        key={item._id}
+                        onClick={() =>
+                          setProductData({ ...productData, shopmanInfo: item })
+                        }
+                      >
+                        <p>{item.username} </p>
+                        <p className="loginSpan">@{item.login}</p>
+                      </div>
+                    )
+                  );
+                })
+              : "Пользователей не найдено"}
+          </div>
+        </div>
+
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button
           className="btn addProductBtnInWindow"

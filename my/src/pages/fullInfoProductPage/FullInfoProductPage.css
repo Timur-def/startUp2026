@@ -154,3 +154,35 @@
   box-sizing: border-box;
   font-family: inherit;
 }
+
+.titleAboutUser{
+  width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+.blockInfoSelectUser{
+  display: flex;
+  flex-direction: row;
+}
+
+
+.inputsShare{
+  position: absolute;
+  top: 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+.inputShare{
+  height: 16px;
+}
+.infoSelectedSalesmanUserBlock{
+  position: relative;
+}
+
+.allUsersBlock{
+  margin-top: 20px; 
+}

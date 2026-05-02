@@ -18,8 +18,18 @@ const user = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin", "salesman"],
     default: "user",
+  },
+  productsCart: {
+    type: Array,
+    required: true,
+    default: [],
+  },
+  saleProductArray: {
+    type: Array,
+    required: true,
+    default: [],
   },
 });
 
@@ -46,6 +56,10 @@ const product = new mongoose.Schema({
   },
   shopmanInfo: {
     type: Object,
+    required: true,
+  },
+  addressHome: {
+    type: String,
     required: true,
   },
 });

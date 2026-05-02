@@ -5,6 +5,7 @@ import {
   getUser,
   getUsers,
   changePassword,
+  getProducts,
 } from "../../auth";
 import { useState, useEffect } from "react";
 import SignIn from "../signIn/SignIn";
@@ -15,6 +16,7 @@ import WindowChangeName from "./windowsActionWithAccount/windowChangeName";
 import WindowChangeLogin from "./windowsActionWithAccount/windowChangeLogin";
 import WindowSelectedUser from "./windowSelectedUser";
 import CustomSelect from "../../components/customSelect/CustomSelect";
+import { Link } from "react-router";
 
 export default function UserPage({ setUserFuncInApp }) {
   const [windowNowOpen, setWindowNowOpen] = useState("signIn");
@@ -33,13 +35,14 @@ export default function UserPage({ setUserFuncInApp }) {
     { title: "Найти по роли", value: "role" },
   ];
   const [selectedOptionInArr, setSelectedOptionInArr] = useState(array[0]);
-
-  const handleSelectChange = (value) => {
-    setSelectedOptionInArr(value);
-  };
+  const [allProducts, setAllProducts] = useState([]);
 
   useEffect(() => {
     getUsers().then((data) => setAllUsers(data));
+  }, []);
+
+  useEffect(() => {
+    getProducts().then((data) => setAllProducts(data));
   }, []);
 
   const handleLogout = () => {
@@ -102,6 +105,8 @@ export default function UserPage({ setUserFuncInApp }) {
     }
   }, [shareUserInput, allUsers]);
 
+  console.log(user);
+
   return (
     <div className="userPage">
       {user ? (
@@ -114,7 +119,10 @@ export default function UserPage({ setUserFuncInApp }) {
                   <p className="loginSpan">@{user.login}</p>
                 </div>
                 {user.role == "admin" && (
-                  <span className="adminSpan"> - администратор</span>
+                  <span className="adminSpan"> администратор</span>
+                )}
+                {user.role == "salesman" && (
+                  <span className="adminSpan"> продавец</span>
                 )}
               </div>
               <button className="btn logout" onClick={handleLogout}>
@@ -135,7 +143,7 @@ export default function UserPage({ setUserFuncInApp }) {
                     return (
                       user._id !== userData._id && (
                         <div
-                          className="cardUser"
+                          className="oneCardUser"
                           onClick={() => (
                             setIsModalWindowSelectedUser(true),
                             setSelectedUser(userData)
@@ -151,7 +159,7 @@ export default function UserPage({ setUserFuncInApp }) {
                   })
                 : "Пользователей не найдено"}
               <div className="inputsShare">
-                <CustomSelect array={array} onChange={handleSelectChange} />
+                <CustomSelect array={array} onChange={setSelectedOptionInArr} />
                 <input
                   type="text"
                   className="inputShare"
@@ -160,6 +168,33 @@ export default function UserPage({ setUserFuncInApp }) {
                   onChange={(e) => setShareUserInput(e.target.value)}
                 />
               </div>
+            </div>
+          )}
+          {user.role == "salesman" && (
+            <div className="block blockActionWithSaleProduct">
+              {user.role == "salesman" &&
+                allProducts.map((item) => {
+                  if (user.saleProductArray?.includes(item._id.toString())) {
+                    return (
+                      <Link
+                        to={"/fullInfoProductPage"}
+                        state={{ item, user }}
+                        className="cardSaleProduct"
+                        key={item._id}
+                      >
+                        <div className="textBlockProduct">
+                          <p>{item.title}</p>
+                          <p className="priceP">{item.price} ₽</p>
+                        </div>
+                        <p
+                          className="btn btnWatchSaleProduct"
+                        >
+                          Узнать подробности
+                        </p>
+                      </Link>
+                    );
+                  }
+                })}
             </div>
           )}
           {isModalWindowSelectedUser && (

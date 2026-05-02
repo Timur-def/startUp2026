@@ -18,7 +18,6 @@ export default function ProductList({ user }) {
   const [isModalWindow, setIsModalWindow] = useState(false);
   const scrollRef = useRef();
 
-  // 1. Первичная загрузка
   useEffect(() => {
     getProducts().then((data) => {
       setAllProducts(data);
@@ -35,13 +34,11 @@ export default function ProductList({ user }) {
     localStorage.setItem("products_index", startIndex);
   }, [startIndex]);
 
-  // 2. Слушатель удаления через навигацию (возврат с FullInfoPage)
   useEffect(() => {
     if (location.state?.deletedId) {
       const idToRemove = location.state.deletedId;
       setAllProducts((prev) => prev.filter((p) => p._id !== idToRemove));
 
-      // Очищаем стейт истории, чтобы не срабатывало при обновлении страницы
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -125,14 +122,16 @@ export default function ProductList({ user }) {
         )}
 
         <div className="productList">
-          {visibleProducts.map((dataProduct) => (
-            <CardProduct
-              key={dataProduct._id}
-              user={user}
-              data={dataProduct}
-              handleDeleteProduct={handleDeleteProduct}
-            />
-          ))}
+          {visibleProducts.map((dataProduct) => {
+            return (
+              <CardProduct
+                key={dataProduct._id}
+                user={user}
+                data={dataProduct}
+                handleDeleteProduct={handleDeleteProduct}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

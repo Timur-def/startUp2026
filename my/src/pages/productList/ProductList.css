@@ -33,6 +33,7 @@
     z-index: 900;
     &:hover {
       transition: 0.2s;
+      background-color: #e9fee2;
       background-color: #d6ffc8;
     }
   }
@@ -56,26 +57,23 @@
   }
 
   &.fileLabel {
-  background-color: #e9fee2;
-  color: black;
-  border-radius: 5px;
-  font-size: 14px;
-  margin-bottom: 5px;
-  width: 99%;
-  &:hover {
-    transition: 0.2s;
-    background-color: #d6ffc8;
+    background-color: #e9fee2;
+    color: black;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 5px;
+    width: 99%;
+    &:hover {
+      transition: 0.2s;
+      background-color: #d6ffc8;
+    }
   }
 }
 
-}
-
-.titleInModalWindow{
+.titleInModalWindow {
   color: #36ad06;
 
-  &.downTitle{
-    margin-top: 30px;
-  }
+
 }
 
 .fileInput {
@@ -86,8 +84,6 @@
   position: absolute;
   z-index: -1;
 }
-
-
 
 .productListContainer {
   position: relative;
@@ -112,10 +108,45 @@
   height: 100%;
 }
 
-
-
 .textInput {
   height: 35px;
   border: 1px solid black;
   border-radius: 4px;
+}
+
+.cardUser {
+  min-width: 90%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 3px solid #d6ffc8;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  &:hover {
+    transition: 0.2s;
+    background-color: #e9fee2;
+  }
+  &:active {
+    transition: 0.1s;
+    background-color: #d6ffc8;
+    border-radius: 15px;
+  }
+  & p {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.allUsersBlock {
+  min-width: 90%;
+  height: 100px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  gap: 5px;
+  margin-top: 20px;
+  padding: 10px;
 }

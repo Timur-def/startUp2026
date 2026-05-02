@@ -96,6 +96,13 @@ app.post("/api/addProduct", async (req, res) => {
   try {
     const newProduct = new Product({ ...req.body });
     const saved = await newProduct.save();
+
+    const sellerId = req.body.shopmanInfo._id;
+
+    await User.findByIdAndUpdate(sellerId, {
+      $push: { saleProductArray: saved._id },
+    });
+
     const obj = saved.toObject();
     obj._id = obj._id.toString();
     res.json(obj);
@@ -212,6 +219,8 @@ app.post("/api/login", async (req, res) => {
         username: user.username,
         login: user.login,
         role: user.role,
+        saleProductArray: user.saleProductArray, // Добавили это
+        productsCart: user.productsCart, // И это, чтобы корзина не терялась
       },
     });
   } catch (err) {

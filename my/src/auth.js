@@ -86,6 +86,7 @@ export async function addProduct(data, file) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...data, modelPath }),
     });
+    
   } catch (err) {
     console.error("addProduct error:", err.message);
   }
@@ -121,29 +122,16 @@ export async function getProducts() {
 
 export async function editProduct(id, data, file) {
   try {
-    // 1. Формируем чистый объект данных (без пустых строк)
     const cleanData = {};
 
     if (data.title) cleanData.title = data.title;
     if (data.description) cleanData.description = data.description;
     if (data.price) cleanData.price = data.price;
-
-    // Обрабатываем вложенный объект продавца
-    const shopman = {};
-    if (data.shopmanInfo?.name) shopman.name = data.shopmanInfo.name;
-    if (data.shopmanInfo?.phoneNumber)
-      shopman.phoneNumber = data.shopmanInfo.phoneNumber;
-    if (data.shopmanInfo?.addressHome)
-      shopman.addressHome = data.shopmanInfo.addressHome;
-
-    // Добавляем инфо о продавце, только если там есть хотя бы одно поле
-    if (Object.keys(shopman).length > 0) {
-      cleanData.shopmanInfo = shopman;
-    }
+    if (data.shopmanInfo) cleanData.shopmanInfo = data.shopmanInfo;
+    if (data.addressHome) cleanData.addressHome = data.addressHome;
 
     const payload = { id, ...cleanData };
 
-    // 2. Обработка файла (остается как была)
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -156,7 +144,6 @@ export async function editProduct(id, data, file) {
       payload.modelPath = url;
     }
 
-    // 3. Отправка
     const res = await fetch(`${API}/editProduct`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -164,14 +151,14 @@ export async function editProduct(id, data, file) {
     });
 
     if (!res.ok) {
-      const errorData = await res.json(); // Попробуем достать текст ошибки от сервера
+      const errorData = await res.json();
       console.error("Детали ошибки от сервера:", errorData);
       throw new Error("Ошибка редактирования товара");
     }
     return await res.json();
   } catch (err) {
     console.error("editProduct error:", err.message);
-    throw err; // Прокидываем ошибку дальше для обработки в UI
+    throw err;
   }
 }
 

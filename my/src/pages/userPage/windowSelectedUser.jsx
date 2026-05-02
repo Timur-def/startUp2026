@@ -11,8 +11,9 @@ export default function windowSelectedUser({
   const array = [
     { title: "admin", value: "admin" },
     { title: "user", value: "user" },
+    { title: "salesman", value: "salesman" },
   ];
-  const [selectedOptionInArr, setSelectedOptionInArr] = useState(array[0]);
+  const [selectedOptionInArr, setSelectedOptionInArr] = useState();
 
   const handleSelectChange = (value) => {
     setSelectedOptionInArr(value);
@@ -20,11 +21,13 @@ export default function windowSelectedUser({
 
   const handleChangeRole = async () => {
     setError(null);
-    console.log(selectedOptionInArr.value, user.role);
+    if (!selectedOptionInArr?.value) {
+      return setError("Не выбрана роль!");
+    }
     if (selectedOptionInArr.value == user.role) {
       return setError("Эта роль уже установлена у пользователя!");
     }
-    if (user && window.confirm("Подтвердите смену роли")) {
+    if (user && window.confirm("Подтвердить смену роли?")) {
       await changeRole(user.login, selectedOptionInArr.value);
       getUsers().then((data) => setAllUsers(data));
       setIsModalWindowSelectedUser(false);
@@ -39,7 +42,9 @@ export default function windowSelectedUser({
         <p>Роль - "{user.role}"</p>
         <CustomSelect array={array} onChange={handleSelectChange} />
         {error && <p className="errorText">{error}</p>}
-        <button onClick={handleChangeRole}>Изменить роль</button>
+        <button onClick={handleChangeRole} className="btn">
+          Изменить роль
+        </button>
       </div>
       <div
         className="background"

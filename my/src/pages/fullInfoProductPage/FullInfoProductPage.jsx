@@ -57,8 +57,12 @@ export default function FullInfoProductPage() {
   const navigate = useNavigate(); // Инициализируем навигацию
   const [isModalWindow, setIsModalWindow] = useState(false);
 
-  const product = location.state?.data;
-  const productInfoShopman = location.state?.data.shopmanInfo;
+  const product = location.state.item
+    ? location.state.item
+    : location.state.data;
+  const productInfoShopman = location.state.item?.shopmanInfo
+    ? location.state.item.shopmanInfo
+    : location.state.data.shopmanInfo;
   const user = location.state?.user;
 
   // Функция удаления
@@ -81,6 +85,8 @@ export default function FullInfoProductPage() {
 
   if (!product) return <div>Товар не найден</div>;
 
+  console.log(product.addressHome);
+
   return (
     <div className="fullInfoProductPage">
       <div className="infoBlock">
@@ -99,13 +105,13 @@ export default function FullInfoProductPage() {
           <div className="contactInformationBlock">
             <p className="descriptionTitle">Контактная информация продавца: </p>
             <p className="descriptionText">
-              Имя продавца: {productInfoShopman.name}
+              Имя продавца: {productInfoShopman.username}
             </p>
             <p className="descriptionText">
-              Номер продавца: {productInfoShopman.phoneNumber}
+              Логин продавца: {productInfoShopman.login}
             </p>
             <p className="descriptionText adress">
-              Адрес дома: {productInfoShopman.addressHome}
+              Адрес дома: {product.addressHome}
             </p>
           </div>
           <div className="btnsBlock">
