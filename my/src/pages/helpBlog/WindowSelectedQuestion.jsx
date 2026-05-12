@@ -7,6 +7,7 @@ export default function WindowSelectedQuestion({
   user,
   setAllQuestions,
   setSelectedQuestion,
+  triggerMessage,
 }) {
   const [modalWindowEditQuestion, setIsModalWindowEditQuestion] =
     useState(false);
@@ -17,25 +18,28 @@ export default function WindowSelectedQuestion({
       const data = await getQuestion();
       setAllQuestions(data);
       setSelectedQuestion(null);
+      triggerMessage("Вопрос удалён", false);
     }
   };
 
-  console.log(user);
-  
-
   const changeOrSelectRating = async (categoryRating) => {
     if (!selectedQuestion?._id) {
-      console.error("Отсутствует ID вопроса или пользователя");
-      return;
+      return triggerMessage("Отсутствует ID вопроса или пользователя", true);
     }
 
     if (!user?._id) {
-      alert("Создайте или войдите в аккаунт, чтобы ставить оценки вопросам");
-      return;
+      return triggerMessage(
+        "Создайте или войдите в аккаунт, чтобы ставить оценки вопросам",
+        false,
+      );
     }
 
     try {
-      await selectRatingQuestion(selectedQuestion._id, user._id, categoryRating);
+      await selectRatingQuestion(
+        selectedQuestion._id,
+        user._id,
+        categoryRating,
+      );
       const data = await getQuestion();
       setAllQuestions(data);
       const nowSelectedQuestionIndex = data.findIndex(
@@ -43,8 +47,9 @@ export default function WindowSelectedQuestion({
       );
 
       setSelectedQuestion(data[nowSelectedQuestionIndex]);
+      triggerMessage("Оценка поставлена", false);
     } catch (err) {
-      alert(err.message);
+      triggerMessage("Непредвиденная ошибка", true);
     }
   };
 
@@ -109,6 +114,7 @@ export default function WindowSelectedQuestion({
           _id={selectedQuestion._id}
           selectedQuestion={selectedQuestion}
           setSelectedQuestion={setSelectedQuestion}
+          triggerMessage={triggerMessage}
         />
       )}
     </>

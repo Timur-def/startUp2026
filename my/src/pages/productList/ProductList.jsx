@@ -4,9 +4,9 @@ import { getProducts, addProduct, deleteProduct } from "../../auth";
 import { useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { View } from "@react-three/drei";
-import { useLocation } from "react-router";
-
+import { useLocation, useNavigate } from "react-router";
 import ModalWindow from "./ModalWindow";
+import { useMessage } from "../../components/message/useMessage";
 
 export default function ProductList({ user }) {
   const [allProducts, setAllProducts] = useState([]);
@@ -17,6 +17,9 @@ export default function ProductList({ user }) {
   const visibleProducts = allProducts.slice(startIndex, startIndex + 4);
   const [isModalWindow, setIsModalWindow] = useState(false);
   const scrollRef = useRef();
+  const [error, setError] = useState("");
+  const { triggerMessage, renderMessage } = useMessage();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getProducts().then((data) => {
@@ -35,13 +38,18 @@ export default function ProductList({ user }) {
   }, [startIndex]);
 
   useEffect(() => {
-    if (location.state?.deletedId) {
-      const idToRemove = location.state.deletedId;
-      setAllProducts((prev) => prev.filter((p) => p._id !== idToRemove));
+    const deletedId = location.state?.deletedId;
+    const isRedact = location.state?.isRedact;
 
-      window.history.replaceState({}, document.title);
+    if (deletedId) {
+      setAllProducts((prev) => prev.filter((p) => p._id !== deletedId));
+      triggerMessage("Товар удалён", false);
+      navigate(location.pathname, { replace: true, state: {} });
+    }else if (isRedact) {
+      triggerMessage("Товар изменён", false);
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state]);
+  }, [location.state?.deletedId, triggerMessage, navigate, location.pathname]);
 
   const changeStartIndex = (side) => {
     if (side === "next" && startIndex + 4 < allProducts.length) {
@@ -64,7 +72,31 @@ export default function ProductList({ user }) {
           setStartIndex((prev) => prev - 4);
         }
       });
+      triggerMessage(error ? error : "Товар удалён", !!error);
     }
+  };
+
+  const handleAddProduct = async (product, file) => {
+    setError(null);
+    if (
+      product.title &&
+      product.description &&
+      product.price &&
+      file &&
+      product.shopmanInfo &&
+      product.addressHome
+    ) {
+      await addProduct(product, file);
+      const data = await getProducts();
+      setAllProducts(data);
+      setIsModalWindow(false);
+      if (data.length > startIndex + 4) {
+        setStartIndex((prev) => prev + 4);
+      }
+    } else {
+      setError("Введены не все данные");
+    }
+    triggerMessage(error ? error : "Товар добавлен", !!error);
   };
 
   return (
@@ -98,9 +130,7 @@ export default function ProductList({ user }) {
         {isModalWindow && (
           <ModalWindow
             setIsModalWindow={setIsModalWindow}
-            setAllProducts={setAllProducts}
-            startIndex={startIndex}
-            setStartIndex={setStartIndex}
+            handleAddProduct={handleAddProduct}
           />
         )}
 
@@ -134,6 +164,7 @@ export default function ProductList({ user }) {
           })}
         </div>
       </div>
+      {renderMessage()}
     </div>
   );
 }

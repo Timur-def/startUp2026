@@ -4,10 +4,11 @@ import { addQuestion, deleteQuestion, getQuestion } from "../../auth";
 import ModalWindowAddQuestion from "./ModalWindowAddQuestion";
 import ModalWindowEditQuestion from "./ModalWindowEditQuestuon";
 import WindowSelectedQuestion from "./WindowSelectedQuestion";
+import { useMessage } from "../../components/message/useMessage";
 export default function HelpBlog({ user }) {
   const [allQuestions, setAllQuestions] = useState([]);
   const [modalWindowAddQuestion, setIsModalWindowAddQuestion] = useState(false);
-
+  const { triggerMessage, renderMessage } = useMessage();
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [error, setError] = useState([]);
 
@@ -63,6 +64,7 @@ export default function HelpBlog({ user }) {
           user={user}
           setAllQuestions={setAllQuestions}
           setSelectedQuestion={setSelectedQuestion}
+          triggerMessage={triggerMessage}
         />
       </div>
 
@@ -70,8 +72,10 @@ export default function HelpBlog({ user }) {
         <ModalWindowAddQuestion
           setIsModalWindowAddQuestion={setIsModalWindowAddQuestion}
           setAllQuestions={setAllQuestions}
+          triggerMessage={triggerMessage}
         />
       )}
+      {renderMessage()}
     </div>
   );
 }

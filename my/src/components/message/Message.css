@@ -1,0 +1,35 @@
+@keyframes posMessage {
+  0% {
+    right: -250px;
+  }
+  10% {
+    right: 30px;
+  }
+  50% {
+    right: 30px;
+  }
+  90% {
+    right: 30px;
+  }
+  100% {
+    right: -250px;
+  }
+}
+
+.messageBox {
+  width: 200px;
+  height: 50px;
+  position: absolute;
+  top: 10px;
+  right: -250px;
+  z-index: 999;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 14px;
+  animation: posMessage 4s ease-in-out;
+  border: 3px solid #d6ffc8;
+  background-color: #e9fee2;
+}

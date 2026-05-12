@@ -3,13 +3,7 @@ import { createPortal } from "react-dom";
 import { addProduct, getProducts, getUsers } from "../../auth";
 import CustomSelect from "../../components/customSelect/CustomSelect";
 import "./ProductList.css";
-
-export default function ModalWindow({
-  setIsModalWindow,
-  setAllProducts,
-  setStartIndex,
-  startIndex,
-}) {
+export default function ModalWindow({ setIsModalWindow, handleAddProduct }) {
   const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
@@ -29,7 +23,6 @@ export default function ModalWindow({
   const [shareUserInput, setShareUserInput] = useState("");
   const [sharedUsers, setSharedUsers] = useState([]);
   const viewArrayUsers = shareUserInput !== "" ? sharedUsers : allUsers;
-
   useEffect(() => {
     getUsers().then((data) => setAllUsers(data));
   }, []);
@@ -59,28 +52,6 @@ export default function ModalWindow({
     }
   }, [shareUserInput, allUsers]);
 
-  const handleAddProduct = async () => {
-    setError(null);
-    if (
-      product.title &&
-      product.description &&
-      product.price &&
-      file &&
-      product.shopmanInfo &&
-      product.addressHome
-    ) {
-      await addProduct(product, file);
-      const data = await getProducts();
-      setAllProducts(data);
-      setFile(null);
-      setIsModalWindow(false);
-      if (data.length > startIndex + 4) {
-        setStartIndex((prev) => prev + 4);
-      }
-    } else {
-      setError("Введены не все данные");
-    }
-  };
   return createPortal(
     <>
       <div className="modalWindow">
@@ -133,9 +104,7 @@ export default function ModalWindow({
             <p className="titleInModalWindow downTitle">
               Информация о продавце:
             </p>
-            <p className="titleAboutUser">
-              {product.shopmanInfo?.username}
-            </p>
+            <p className="titleAboutUser">{product.shopmanInfo?.username}</p>
           </div>
           <div className="infoSelectedSalesmanUserBlock">
             <div className="blockInfoSelectUser inputsShare">
@@ -177,7 +146,7 @@ export default function ModalWindow({
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button
           className="btn addProductBtnInWindow"
-          onClick={handleAddProduct}
+          onClick={()=>(handleAddProduct(product, file), setFile(null))}
         >
           Добавить
         </button>

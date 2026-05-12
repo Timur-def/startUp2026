@@ -2,22 +2,26 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { addQuestion, getQuestion } from "../../auth";
 
-export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, setAllQuestions }) {
-  const [error, setError] = useState(null);
+export default function ModalWindowAddQuestion({
+  setIsModalWindowAddQuestion,
+  setAllQuestions,
+  triggerMessage,
+}) {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
 
   const handleAddProduct = async () => {
     if (!text || !title) {
-      return setError("Не заполнено одно из полей");
+      return triggerMessage("Не заполнено одно из полей", true);
+    } else {
+      await addQuestion(title, text);
+      const data = await getQuestion();
+      setAllQuestions(data);
+      setText("");
+      setTitle("");
+      setIsModalWindowAddQuestion(false);
+      triggerMessage("Вопрос добавлен", false);
     }
-    setError(null);
-    await addQuestion(title, text);
-    const data = await getQuestion();
-    setAllQuestions(data);
-    setText("");
-    setTitle("");
-    setIsModalWindowAddQuestion(false)
   };
 
   return createPortal(
@@ -36,7 +40,6 @@ export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, se
           placeholder="Содержание"
           onChange={(e) => setText(e.target.value)}
         />
-        {error && <p style={{ color: "red" }}>{error}</p>}
         <button
           className="btn addProductBtnInWindow"
           onClick={handleAddProduct}
@@ -44,7 +47,10 @@ export default function ModalWindowAddQuestion({ setIsModalWindowAddQuestion, se
           Добавить
         </button>
       </div>
-      <div className="background" onClick={() => setIsModalWindowAddQuestion(false)} />
+      <div
+        className="background"
+        onClick={() => setIsModalWindowAddQuestion(false)}
+      />
     </>,
     document.body,
   );

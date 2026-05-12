@@ -8,6 +8,7 @@ import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 import * as THREE from "three";
 import { deleteProduct } from "../../auth";
 import RedactModalWindow from "./RedactModalWindow";
+import { useMessage } from "../../components/message/useMessage";
 
 function InteractiveHouse({ modelPath }) {
   const { scene } = useGLTF(modelPath);
@@ -56,6 +57,8 @@ export default function FullInfoProductPage() {
   const location = useLocation();
   const navigate = useNavigate(); // Инициализируем навигацию
   const [isModalWindow, setIsModalWindow] = useState(false);
+  const [error, setError] = useState(null);
+  const { triggerMessage } = useMessage();
 
   const product = location.state.item
     ? location.state.item
@@ -65,27 +68,22 @@ export default function FullInfoProductPage() {
     : location.state.data.shopmanInfo;
   const user = location.state?.user;
 
-  // Функция удаления
   const handleDeleteProduct = async () => {
     if (window.confirm("Удалить этот товар?")) {
       try {
-        // 1. Удаляем на сервере
         await deleteProduct({ id: product._id });
-
-        // 2. Переходим на страницу списка и передаем ID удаленного товара в стейте
         navigate("/productList", {
           state: { deletedId: product._id },
-          replace: true, // Заменяем текущую страницу в истории, так как товара больше нет
+          replace: true,
         });
       } catch (error) {
         console.error("Ошибка при удалении:", error);
+        triggerMessage("Ошибка сервера", true);
       }
     }
   };
 
   if (!product) return <div>Товар не найден</div>;
-
-  console.log(product.addressHome);
 
   return (
     <div className="fullInfoProductPage">
@@ -135,9 +133,16 @@ export default function FullInfoProductPage() {
         </div>
       </div>
       <div className="windowHouse">
-        <Link className="btn backBtn" to={"/productList"}>
-          Вернуться к товарам
-        </Link>
+        {location.state.item ? (
+          <Link className="btn backBtn" to={"/user  Page"}>
+            Вернуться в профиль
+          </Link>
+        ) : (
+          <Link className="btn backBtn" to={"/productList"}>
+            Вернуться к товарам
+          </Link>
+        )}
+
         <Canvas camera={{ position: [0, 0, 5] }}>
           <Suspense fallback={null}>
             <InteractiveHouse modelPath={product.modelPath} />

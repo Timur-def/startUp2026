@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { editQuestion, getQuestion } from "../../auth";
+import { useMessage } from "../../components/message/useMessage";
 
 export default function ModalWindowAddQuestion({
   setIsModalWindowEditQuestion,
@@ -8,22 +9,21 @@ export default function ModalWindowAddQuestion({
   selectedQuestion,
   setSelectedQuestion,
   _id,
+  triggerMessage
 }) {
   const [error, setError] = useState(null);
   const [title, setTitle] = useState(selectedQuestion.title);
   const [text, setText] = useState(selectedQuestion.text);
-
   const handleEditProduct = async () => {
     const updates = {};
     if (title) updates.title = title;
     if (text) updates.text = text;
     if (Object.keys(updates).length === 0) {
-      return setError("Не заполнено ни одно из полей");
+      return triggerMessage("Не заполнено ни одно из полей", true);
     }
     if (title == selectedQuestion.title && text == selectedQuestion.text) {
-      return setError("Не изменено ни одно из полей");
+      return triggerMessage("Не изменено ни одно из полей", true);
     }
-    setError(null);
     await editQuestion({ id: _id, updates });
     const data = await getQuestion();
     setAllQuestions(data);
@@ -33,6 +33,7 @@ export default function ModalWindowAddQuestion({
     setSelectedQuestion(data[nowSelectedQuestionIndex]);
     setText("");
     setTitle("");
+    triggerMessage("Вопрос изменён", false);
     setIsModalWindowEditQuestion(false);
   };
 

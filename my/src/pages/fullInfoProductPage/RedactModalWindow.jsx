@@ -6,10 +6,11 @@ import CustomSelect from "../../components/customSelect/CustomSelect";
 
 export default function RedactModalWindow({ setIsModalWindow, product }) {
   const navigate = useNavigate();
-  const handleFileChange = (e) => setFile(e.target.files[0]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [productData, setProductData] = useState(product);
+  
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const [allUsers, setAllUsers] = useState([]);
   const array = [
@@ -50,6 +51,9 @@ export default function RedactModalWindow({ setIsModalWindow, product }) {
     }
   }, [shareUserInput, allUsers]);
 
+  console.log(file);
+  
+
   const handleAddProduct = async () => {
     setError(null);
     if (
@@ -65,13 +69,16 @@ export default function RedactModalWindow({ setIsModalWindow, product }) {
         productData.description !== product.description ||
         productData.price !== product.price ||
         productData.addressHome !== product.addressHome ||
-        file !== product.file ||
+        file !== null ||
         productData.shopmanInfo !== product.shopmanInfo
       ) {
         try {
           await editProduct(productData._id, productData, file);
           setIsModalWindow(false);
-          navigate("/productList");
+          navigate("/productList", {
+          state: { isRedact: true },
+          replace: true,
+        });
         } catch (err) {
           setError("Ошибка при сохранении данных");
         }
