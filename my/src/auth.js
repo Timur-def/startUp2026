@@ -1,4 +1,4 @@
-const API = "http://localhost:3001/api";
+const API = "/api";
 
 export async function register(username, userlogin, password) {
   const res = await fetch(`${API}/register`, {
@@ -71,7 +71,7 @@ export async function addProduct(data, file) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadRes = await fetch(`http://localhost:3001/api/upload`, {
+      const uploadRes = await fetch(`/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -134,10 +134,11 @@ export async function editProduct(id, data, file) {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-      const uploadRes = await fetch(`http://localhost:3001/api/upload`, {
+      const uploadRes = await fetch(`/api/upload`, {
         method: "POST",
         body: formData,
       });
+
       if (!uploadRes.ok) throw new Error("Ошибка загрузки файла");
       const { url } = await uploadRes.json();
       payload.modelPath = url;
