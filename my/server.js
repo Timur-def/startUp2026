@@ -33,7 +33,6 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    console.log("Загружаемый файл:", file.originalname, "расширение:", ext);
     cb(null, true);
   },
 });
@@ -112,6 +111,39 @@ app.post("/api/addProduct", async (req, res) => {
   }
 });
 
+app.post("/api/addProductInCart", async (req, res) => {
+  try {
+    const { idProduct, idUser } = req.body;
+    if (!idProduct || !idUser) {
+      return res
+        .status(400)
+        .json({ error: "Не переданы ID товара или пользователя" });
+    }
+    if (
+      !mongoose.Types.ObjectId.isValid(idProduct) ||
+      !mongoose.Types.ObjectId.isValid(idUser)
+    ) {
+      return res.status(400).json({ error: "Некорректный формат ID" });
+    }
+    const productExists = await Product.exists({ _id: idProduct });
+    if (!productExists) {
+      return res.status(404).json({ error: "Добавляемый товар не найден" });
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      idUser,
+      { $addToSet: { productsCart: idProduct } },
+      { returnDocument: "after" },
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
+    res.json({updatedUser});
+  } catch (e) {
+    console.error("Ошибка при добавлении в корзину:", e.message);
+    res.status(500).json({ error: "Ошибка сервера при работе с базой данных" });
+  }
+});
+
 // Удаление продукта
 app.post("/api/deleteProduct", async (req, res) => {
   try {
@@ -123,6 +155,7 @@ app.post("/api/deleteProduct", async (req, res) => {
     const product = await Product.findById(id);
     if (!product) return res.status(404).json({ error: "Документ не найден" });
 
+    // 1. Удаление файла модели с диска
     if (product.modelPath) {
       const filename = path.basename(product.modelPath);
       const filePath = path.join(__dirname, "public", "models", filename);
@@ -132,10 +165,24 @@ app.post("/api/deleteProduct", async (req, res) => {
         console.warn("Файл не найден при удалении:", filePath);
       }
     }
+    const objectId = new mongoose.Types.ObjectId(id);
+    await Promise.all([
+      User.updateMany(
+        { productsCart: objectId },
+        { $pull: { productsCart: objectId } },
+      ),
+      User.updateMany(
+        { saleProductArray: objectId },
+        { $pull: { saleProductArray: objectId } },
+      ),
+    ]);
 
-    await Product.deleteOne({ _id: id });
+    // 3. Удаление самого товара из базы данных
+    await Product.deleteOne({ _id: objectId });
+
     res.json({ success: true });
   } catch (err) {
+    console.error("Ошибка на сервере:", err);
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
@@ -446,6 +493,14 @@ app.post("/api/editQuestion", async (req, res) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
+
+
+app.use(express.static(path.join(__dirname, 'dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 
 // Запуск
 const PORT = process.env.PORT || 3001;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Message from './Message'; 
 
 export const useMessage = () => {
@@ -9,8 +9,16 @@ export const useMessage = () => {
     isError: false,
   });
 
-  // Стабильная ссылка на функцию
+  // Хранилище для ID активного тайм-аута
+  const timeoutRef = useRef(null);
+
   const triggerMessage = useCallback((text, isError = false) => {
+    // 1. Сброс предыдущего тайм-аута
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // 2. Обновление состояния для нового сообщения
     setMsgState((prev) => ({
       isVisible: true,
       count: prev.count + 1,
@@ -18,16 +26,24 @@ export const useMessage = () => {
       isError: isError,
     }));
 
-    setTimeout(() => {
+    // 3. Установка нового тайм-аута
+    timeoutRef.current = setTimeout(() => {
       setMsgState((prev) => ({ ...prev, isVisible: false }));
-    }, 4000);
+    }, 3000);
+  }, []);
+
+  // Очистка тайм-аута при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   const renderMessage = () => {
     if (!msgState.isVisible) return null;
     return (
       <Message
-        key={msgState.count}
+        key={msgState.count} // Перемонтирует компонент Message
         text={msgState.text}
         type={msgState.isError ? "error" : "notErr"}
       />

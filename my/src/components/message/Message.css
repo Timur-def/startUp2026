@@ -29,7 +29,7 @@
   justify-content: center;
   padding: 5px;
   border-radius: 14px;
-  animation: posMessage 4s ease-in-out;
+  animation: posMessage 3s ease-in-out;
   border: 3px solid #d6ffc8;
   background-color: #e9fee2;
 }

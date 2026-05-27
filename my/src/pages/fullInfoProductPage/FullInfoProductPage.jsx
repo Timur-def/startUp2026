@@ -6,7 +6,7 @@ import { Stage, OrbitControls, Environment, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 import * as THREE from "three";
-import { deleteProduct } from "../../auth";
+import { addProductInCart, deleteProduct } from "../../auth";
 import RedactModalWindow from "./RedactModalWindow";
 import { useMessage } from "../../components/message/useMessage";
 
@@ -53,12 +53,12 @@ function InteractiveHouse({ modelPath }) {
   return <primitive ref={modelRef} object={clonedScene} />;
 }
 
-export default function FullInfoProductPage() {
+export default function FullInfoProductPage({ setUserFuncInApp }) {
   const location = useLocation();
   const navigate = useNavigate(); // Инициализируем навигацию
   const [isModalWindow, setIsModalWindow] = useState(false);
   const [error, setError] = useState(null);
-  const { triggerMessage } = useMessage();
+  const { triggerMessage, renderMessage } = useMessage();
 
   const product = location.state.item
     ? location.state.item
@@ -80,6 +80,21 @@ export default function FullInfoProductPage() {
         console.error("Ошибка при удалении:", error);
         triggerMessage("Ошибка сервера", true);
       }
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (user) {
+      const result = await addProductInCart(product._id, user._id);
+      console.log(result.updatedUser);
+      if (result) {
+        triggerMessage("Товар добавлен в корзину", false);
+      } else {
+        triggerMessage(`Не удалось добавить`, true);
+      }
+    } else {
+      triggerMessage("Ввойдите в аккаунт, чтобы добавлять товары в корзину");
+      return;
     }
   };
 
@@ -113,9 +128,15 @@ export default function FullInfoProductPage() {
             </p>
           </div>
           <div className="btnsBlock">
-            {user?.role !== "admin" && (
-              <div className="btn btnBuy">Приобрести</div>
-            )}
+            {user?.role !== "admin" &&
+              !user?.saleProductArray?.includes(product.id) && (
+                <>
+                  <div className="btn btnBuy">Приобрести</div>
+                  <div className="btn btnBuy" onClick={handleAddToCart}>
+                    Добавить в корзину
+                  </div>
+                </>
+              )}
             {user?.role === "admin" && (
               <>
                 <div
@@ -133,8 +154,9 @@ export default function FullInfoProductPage() {
         </div>
       </div>
       <div className="windowHouse">
+        {renderMessage()}
         {location.state.item ? (
-          <Link className="btn backBtn" to={"/user  Page"}>
+          <Link className="btn backBtn" to={"/userPage"}>
             Вернуться в профиль
           </Link>
         ) : (

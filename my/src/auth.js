@@ -86,7 +86,6 @@ export async function addProduct(data, file) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...data, modelPath }),
     });
-    
   } catch (err) {
     console.error("addProduct error:", err.message);
   }
@@ -288,5 +287,28 @@ export async function editQuestion(data) {
   } catch (err) {
     console.error("error:", err.message);
     throw err;
+  }
+}
+
+export async function addProductInCart(idProduct, idUser) {
+  try {
+    const response = await fetch(`${API}/addProductInCart`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idProduct, idUser }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Ошибка: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data.updatedUser);
+    if (data.updatedUser) {
+      localStorage.setItem("user", JSON.stringify(data.updatedUser));
+    }
+    return data;
+  } catch (err) {
+    console.error("Ошибка при добавлении в корзину:", err.message);
+    return { success: false, error: err.message };
   }
 }

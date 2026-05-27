@@ -63,22 +63,27 @@
 }
 .mainBlockInfo {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 20px;
+  width: 100%;
   & .textMainBlockInfo {
     font-size: 18px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin-top: 10px;
   }
   & .adminSpan {
     color: #36ad06;
-    margin-left: 5px;
   }
 
   .defInfo {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 5px;
+    &.role{
+      display: flex;
+      flex-direction: row;
+    }
   }
 }
 
@@ -110,6 +115,7 @@
   &.logout {
     border: 1px solid #e90808;
     width: 200px;
+    margin-left: auto;
     &:active {
       background-color: #e9080875;
     }

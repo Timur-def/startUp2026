@@ -118,12 +118,18 @@ export default function UserPage({ setUserFuncInApp }) {
                   {user.username}
                   <p className="loginSpan">@{user.login}</p>
                 </div>
-                {user.role == "admin" && (
-                  <span className="adminSpan"> администратор</span>
-                )}
-                {user.role == "salesman" && (
-                  <span className="adminSpan"> продавец</span>
-                )}
+                <div className="defInfo role">
+                  Роль: 
+                  {user.role == "admin" && (
+                    <span className="adminSpan"> администратор</span>
+                  )}
+                  {user.role == "salesman" && (
+                    <span className="adminSpan"> продавец</span>
+                  )}
+                  {user.role == "user" && (
+                    <span className="adminSpan"> пользователь</span>
+                  )}
+                </div>
               </div>
               <button className="btn logout" onClick={handleLogout}>
                 Выйти
@@ -172,29 +178,50 @@ export default function UserPage({ setUserFuncInApp }) {
           )}
           {user.role == "salesman" && (
             <div className="block blockActionWithSaleProduct">
-              {user.role == "salesman" &&
-                allProducts.map((item) => {
-                  if (user.saleProductArray?.includes(item._id.toString())) {
-                    return (
-                      <Link
-                        to={"/fullInfoProductPage"}
-                        state={{ item, user }}
-                        className="cardSaleProduct"
-                        key={item._id}
-                      >
-                        <div className="textBlockProduct">
-                          <p>{item.title}</p>
-                          <p className="priceP">{item.price} ₽</p>
-                        </div>
-                        <p
-                          className="btn btnWatchSaleProduct"
-                        >
-                          Узнать подробности
-                        </p>
-                      </Link>
-                    );
-                  }
-                })}
+              {allProducts.map((item) => {
+                if (user.saleProductArray?.includes(item._id.toString())) {
+                  return (
+                    <Link
+                      to={"/fullInfoProductPage"}
+                      state={{ item, user }}
+                      className="cardSaleProduct"
+                      key={item._id}
+                    >
+                      <div className="textBlockProduct">
+                        <p>{item.title}</p>
+                        <p className="priceP">{item.price} ₽</p>
+                      </div>
+                      <p className="btn btnWatchSaleProduct">
+                        Узнать подробности
+                      </p>
+                    </Link>
+                  );
+                }
+              })}
+            </div>
+          )}
+          {user.role == "user" && (
+            <div className="block blockActionWithSaleProduct">
+              {allProducts.map((item) => {
+                if (user.productsCart?.includes(item._id.toString())) {
+                  return (
+                    <Link
+                      to={"/fullInfoProductPage"}
+                      state={{ item, user }}
+                      className="cardSaleProduct"
+                      key={item._id}
+                    >
+                      <div className="textBlockProduct">
+                        <p>{item.title}</p>
+                        <p className="priceP">{item.price} ₽</p>
+                      </div>
+                      <p className="btn btnWatchSaleProduct">
+                        Узнать подробности
+                      </p>
+                    </Link>
+                  );
+                }
+              })}
             </div>
           )}
           {isModalWindowSelectedUser && (

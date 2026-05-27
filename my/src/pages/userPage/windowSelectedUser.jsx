@@ -27,6 +27,16 @@ export default function windowSelectedUser({
     if (selectedOptionInArr.value == user.role) {
       return setError("Эта роль уже установлена у пользователя!");
     }
+    if (user.saleProductArray.length !== 0) {
+      return setError(
+        "Не возможна смена роли, так как у продавца есть непроданные товары!",
+      );
+    }
+    if (user.productsCart.length !== 0) {
+      return setError(
+        "Не возможна смена роли, так как у пользователя есть товары в корзине!",
+      );
+    }
     if (user && window.confirm("Подтвердить смену роли?")) {
       await changeRole(user.login, selectedOptionInArr.value);
       getUsers().then((data) => setAllUsers(data));

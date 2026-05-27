@@ -118,7 +118,7 @@
     width: 250px;
     height: 40px;
     position: absolute;
-    top: 15px;
+    bottom: 15px;
     right: 15px;
     z-index: 1000;
     background-color: #e9fee2;
