@@ -68,6 +68,16 @@
     transition: 0.2s;
     color: #36ad06;
   }
+  &.chatsLink{
+    position: fixed;
+    right: 50px;
+    top: 30px;
+    font-size: 30px;
+    &:hover {
+      transition: 0.1s;
+      transform: rotateZ(-15deg);
+    }
+  }
 }
 
 .windowPages{

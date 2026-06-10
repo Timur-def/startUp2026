@@ -45,7 +45,7 @@ export default function ProductList({ user }) {
       setAllProducts((prev) => prev.filter((p) => p._id !== deletedId));
       triggerMessage("Товар удалён", false);
       navigate(location.pathname, { replace: true, state: {} });
-    }else if (isRedact) {
+    } else if (isRedact) {
       triggerMessage("Товар изменён", false);
       navigate(location.pathname, { replace: true, state: {} });
     }
@@ -78,6 +78,7 @@ export default function ProductList({ user }) {
 
   const handleAddProduct = async (product, file) => {
     setError(null);
+    let err = ''
     if (
       product.title &&
       product.description &&
@@ -95,8 +96,13 @@ export default function ProductList({ user }) {
       }
     } else {
       setError("Введены не все данные");
+      err = "Введены не все данные"
     }
-    triggerMessage(error ? error : "Товар добавлен", !!error);
+    if (err) {
+      triggerMessage(err, 'error');
+    }else{
+      triggerMessage("Товар добавлен", false);
+    }
   };
 
   return (

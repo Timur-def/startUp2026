@@ -1,4 +1,40 @@
-const API = "/api";
+import { io } from "socket.io-client";
+
+const API = "http://localhost:3001/api";
+
+// auth.js
+export function initSocket() {
+  return io('http://localhost:3001', {
+    transports: ["websocket"], // <--- ДОБАВЬТЕ ЭТО (отключает polling и сразу включает сокеты)
+    upgrade: false
+  });
+}
+
+
+
+export async function getMyDialogs(myLogin) {
+  // Если логин не пришел (пользователь не успел авторизоваться), прерываем запрос
+  if (!myLogin) {
+    console.warn("getMyDialogs: логин пользователя отсутствует");
+    return [];
+  }
+
+  try {
+    const response = await fetch(`${API}/my-dialogs/${myLogin}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    
+    // Если сервер ответил ошибкой, не пытаемся парсить её как JSON
+    if (!response.ok) throw new Error("Ошибка при получении диалогов");
+    
+    return await response.json();
+  } catch (err) {
+    console.error("getMyDialogs error:", err.message);
+    return [];
+  }
+}
+
 
 export async function register(username, userlogin, password) {
   const res = await fetch(`${API}/register`, {
@@ -71,7 +107,7 @@ export async function addProduct(data, file) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const uploadRes = await fetch(`/api/upload`, {
+      const uploadRes = await fetch(`${API}/upload`, {
         method: "POST",
         body: formData,
       });
@@ -134,7 +170,7 @@ export async function editProduct(id, data, file) {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-      const uploadRes = await fetch(`/api/upload`, {
+      const uploadRes = await fetch(`${API}/upload`, {
         method: "POST",
         body: formData,
       });

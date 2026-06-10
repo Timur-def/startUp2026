@@ -1,5 +1,6 @@
 import "./App.css";
 
+import Chats from "./pages/chats/Chats";
 import UserPage from "./pages/userPage/UserPage";
 import ProductList from "./pages/productList/ProductList";
 import FullInfoProductPage from "./pages/fullInfoProductPage/FullInfoProductPage";
@@ -34,6 +35,9 @@ export default function App() {
           <Link className="link" to={"/userPage"}>
             Профиль
           </Link>
+          <Link className="link chatsLink" to={"/chats"}>
+            💬
+          </Link>
         </div>
       </div>
       <div className="windowPages">
@@ -49,6 +53,7 @@ export default function App() {
             element={<FullInfoProductPage setUserFuncInApp={setUser} />}
           />
           <Route path="/helpBlog" element={<HelpBlog user={user} />} />
+            <Route path="/chats" element={<Chats />} />
         </Routes>
       </div>
     </div>

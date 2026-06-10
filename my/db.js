@@ -63,6 +63,7 @@ const product = new mongoose.Schema({
     required: true,
   },
 });
+
 const questionInTheHelpBlog = new mongoose.Schema({
   title: {
     type: String,
@@ -87,6 +88,14 @@ const questionInTheHelpBlog = new mongoose.Schema({
   },
 });
 
+const messageSchema = new mongoose.Schema({
+  roomId: { type: String, required: true },
+  sender: { type: String, required: true },
+  text: { type: String, required: true },
+  time: { type: String, required: true } 
+}, { timestamps: true }); 
+
+export const Message = mongoose.model("Message", messageSchema);
 export const User = mongoose.model("User", user);
 export const Product = mongoose.model("Product", product);
 export const QuestionInTheHelpBlog = mongoose.model(

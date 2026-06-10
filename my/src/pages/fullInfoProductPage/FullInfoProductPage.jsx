@@ -1,5 +1,4 @@
 import "./FullInfoProductPage.css";
-// Добавляем useNavigate в импорт
 import { Link, useLocation, useNavigate } from "react-router";
 import { Canvas } from "@react-three/fiber";
 import { Stage, OrbitControls, Environment, useGLTF } from "@react-three/drei";
@@ -55,7 +54,7 @@ function InteractiveHouse({ modelPath }) {
 
 export default function FullInfoProductPage({ setUserFuncInApp }) {
   const location = useLocation();
-  const navigate = useNavigate(); // Инициализируем навигацию
+  const navigate = useNavigate(); // Используем хук для перехода на страницу чатов
   const [isModalWindow, setIsModalWindow] = useState(false);
   const [error, setError] = useState(null);
   const { triggerMessage, renderMessage } = useMessage();
@@ -98,6 +97,21 @@ export default function FullInfoProductPage({ setUserFuncInApp }) {
     }
   };
 
+  // Обработчик для кнопки «Написать продавцу»
+  const handleContactSeller = () => {
+    if (!user) {
+      triggerMessage("Войдите в аккаунт, чтобы написать продавцу", true);
+      return;
+    }
+
+    if (productInfoShopman && productInfoShopman.login) {
+      // Перенаправляем на страницу чатов и прокидываем query-параметр ?seller=логин_продавца
+      navigate(`/chats?seller=${productInfoShopman.login}`);
+    } else {
+      triggerMessage("Не удалось определить контакты продавца", true);
+    }
+  };
+
   if (!product) return <div>Товар не найден</div>;
 
   return (
@@ -131,7 +145,10 @@ export default function FullInfoProductPage({ setUserFuncInApp }) {
             {user?.role !== "admin" &&
               !user?.saleProductArray?.includes(product.id) && (
                 <>
-                  <div className="btn btnBuy">Приобрести</div>
+                  {/* Добавлен вызов обработчика при клике */}
+                  <div className="btn btnBuy" onClick={handleContactSeller}>
+                    Написать продавцу
+                  </div>
                   <div className="btn btnBuy" onClick={handleAddToCart}>
                     Добавить в корзину
                   </div>

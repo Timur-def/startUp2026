@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import cors from "cors";
 import dotenv from "dotenv";
-import { User, Product, QuestionInTheHelpBlog } from "./db.js";
+import { User, Product, QuestionInTheHelpBlog, Message } from "./db.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -39,12 +39,6 @@ const upload = multer({
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-  },
-});
 
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:5173" }));
@@ -55,12 +49,119 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "Файл не получен" });
   res.json({ url: `/models/${req.file.filename}` });
 });
-
 // Подключение к MongoDB
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://localhost:27017/myapp")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+  allowEIO3: true,
+});
+
+app.get("/api/my-dialogs/:myLogin", async (req, res) => {
+  try {
+    const { myLogin } = req.params;
+    const activeRooms = await Message.distinct("roomId", {
+      roomId: new RegExp(myLogin),
+    });
+
+    const interlocutorLogins = activeRooms
+      .map((roomId) => {
+        const parts = roomId.split("-");
+        return parts.find((login) => login !== myLogin);
+      })
+      .filter(Boolean);
+
+    const dialogs = await User.find(
+      { login: { $in: interlocutorLogins } },
+      "username login",
+    );
+    res.setHeader("Content-Type", "application/json");
+    return res.json(dialogs);
+  } catch (err) {
+    console.error("Ошибка при поиске диалогов:", err);
+    return res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+// server.js
+
+io.on("connection", (socket) => {
+  console.log(`\n[SOCKET] Клиент успешно подключился. ID: ${socket.id}`);
+
+  // 1. Ловим вход в комнату чата
+  socket.on("joinPrivateChat", async (data) => {
+    const myLogin = data.myLogin || data.username;
+    const targetLogin = data.targetLogin || data.username;
+
+    if (!myLogin || !targetLogin) return;
+
+    const roomId = [myLogin, targetLogin].sort().join("-");
+    socket.join(roomId);
+    console.log(`[SOCKET ROOM] Клиент ${myLogin} зашел в комнату: ${roomId}`);
+
+    try {
+      // Подгружаем историю из MongoDB для этой пары
+      const chatHistory = await Message.find({ roomId: roomId })
+        .sort({ createdAt: 1 })
+        .limit(100);
+      socket.emit("chatHistory", chatHistory);
+    } catch (err) {
+      console.error("[MONGO ERROR] Не удалось загрузить историю:", err);
+    }
+  });
+
+  // 2. ПРИЕМНИК ОБЫЧНЫХ ОБЪЕКТОВ (JSON)
+  socket.on("sendPrivateMessage", async (data) => {
+    console.log("[SOCKET EVENT] Сервер поймал сообщение:", data);
+
+    const { myLogin, targetLogin, text } = data;
+
+    if (!myLogin || !targetLogin || !text) {
+      console.log("[SOCKET WARNING] Получены пустые поля. Пропуск записи.");
+      return;
+    }
+
+    const roomId = [myLogin, targetLogin].sort().join("-");
+
+    // Формируем чистый объект для базы данных
+    const messageData = {
+      roomId: roomId,
+      sender: myLogin,
+      text: text,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    try {
+      // Железно пишем в MongoDB
+      const savedMessage = await Message.create(messageData);
+      console.log(
+        `[MONGO SUCCESS] Запись в БД успешна. ID: ${savedMessage._id}`,
+      );
+
+      // Отправляем сообщение ВСЕМ участникам комнаты (покупателю и продавцу)
+      io.to(roomId).emit("receivePrivateMessage", savedMessage);
+      console.log(`[SOCKET BROADCAST] Переслано в комнату: ${roomId}`);
+    } catch (err) {
+      console.error(
+        "[MONGO CRITICAL ERROR] База данных отвергла сообщение:",
+        err.message,
+      );
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`[SOCKET] Клиент отключился: ${socket.id}`);
+  });
+});
 
 // Регистрация
 app.post("/api/register", async (req, res) => {
@@ -137,7 +238,7 @@ app.post("/api/addProductInCart", async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ error: "Пользователь не найден" });
     }
-    res.json({updatedUser});
+    res.json({ updatedUser });
   } catch (e) {
     console.error("Ошибка при добавлении в корзину:", e.message);
     res.status(500).json({ error: "Ошибка сервера при работе с базой данных" });
@@ -494,13 +595,11 @@ app.post("/api/editQuestion", async (req, res) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, "dist")));
 
-app.use(express.static(path.join(__dirname, 'dist')));
-
-app.get('(.*)', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
-
 
 // Запуск
 const PORT = process.env.PORT || 3001;

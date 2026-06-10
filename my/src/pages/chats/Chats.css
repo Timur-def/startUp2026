@@ -1,0 +1,129 @@
+.chats {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.rightColumn {
+  width: 30%;
+  border-right: 1px solid #36ad06;
+  display: flex;
+  flex-direction: column;
+}
+
+.usersList {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.windowActiveChat {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fdfdfd;
+}
+
+.titleChat {
+  padding: 15px;
+  border-bottom: 1px solid #36ad06;
+  font-weight: "bold";
+}
+
+.chatWindow {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-x: hidden;
+}
+
+.textInMessage {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: #eee;
+  color: #333;
+  &.textInMessageMe {
+    background-color: #36ad06;
+    color: #fff;
+  }
+}
+
+.message {
+  max-width: 70%;
+  align-self: flex-start;
+  &.messageMe {
+    align-self: flex-end;
+  }
+}
+
+.windowInput {
+  display: flex;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #36ad06;
+}
+
+.input {
+  flex: 1;
+  padding: 12px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.btnSendMessage {
+  padding: 12px 24px;
+  background-color: #36ad06;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.windowNotSelectedChat {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: gray;
+}
+
+.textNotActiveChat {
+  padding: 15px;
+  color: gray;
+}
+
+.signInText {
+  flex: 1;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  font-size: 24px;
+  color: #36ad06;
+}
+
+.chatWithUser {
+  display: flex;
+  flex-direction: row;
+  align-items: center; 
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #d6ffc8;
+  &.active {
+    background-color: #d6ffc8;
+  }
+}
+
+.leftGreenBlock {
+  width: 3px;
+  flex-shrink: 0;
+  background-color: #36ad06;
+  margin-right: 5px;
+  align-self: stretch; 
+}
